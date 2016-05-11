@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>responsibleTables Tests</title>
+    <!--<style>.test-suite {display: none;}</style>-->
+    <link rel="stylesheet" href="../public/style/main.css">
+    <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet">
+</head>
+<body>
+    <div id="mocha"></div>
+    <div class="test-suite">
+        <div id="t1">
+            <table id="table1">
+                <thead><tr><th>foo</th><th>bar</th></tr></thead>
+                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            </table>
+        </div>
+        <div id="t2">
+            <table id="table2">
+                <thead><tr><th>foo</th><th>bar</th></tr></thead>
+                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            </table>
+        </div>
+        <div id="t3">
+            <table id="table3">
+                <thead><tr><th>foo</th><th>bar</th></tr></thead>
+                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            </table>
+        </div>
+        <div id="t4">
+            <table id="table4">
+                <thead><tr><th>foo</th><th>bar</th></tr></thead>
+                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            </table>
+        </div>
+        <div id="t5">
+            <table id="table5">
+                <thead><tr><th>foo</th><th>bar</th></tr></thead>
+                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="../src/responsibleTable.js"></script>
+    <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="./index.js"></script>
+    <script>
+        mocha.checkLeaks();
+        mocha.run();
+    </script>
+</body>
+</html>

@@ -7,7 +7,7 @@ const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
 
 const config = {
-    package: 'responsibleTables',
+    package: 'responsibleTable',
     dir: {
         dist: {
             src: 'dist',

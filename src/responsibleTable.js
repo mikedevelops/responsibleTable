@@ -1,3 +1,6 @@
+// TODO
+// public method for returning table(s)
+
 class ResponsibleTable {
     constructor (options) {
         // defaults
@@ -7,13 +10,15 @@ class ResponsibleTable {
             containerSelector: '.container',
             subHeadingClass: 'responsibleTable__sub-heading',
             tableDataClass: 'responsibleTable__table-data',
-            tableSelector: '.responsibleTable'
+            tableSelector: '.responsibleTable',
+            debug: false
         }
 
         this.extendDefaults(options, this.defaults);
 
         // vars
         this.originalTables = [].slice.call(document.querySelectorAll(this.defaults.tableSelector));
+        this.tableProps = {};
         this.containers = [].slice.call(document.querySelectorAll(this.defaults.containerSelector));
         this.columnHeadings = [];
 
@@ -24,41 +29,95 @@ class ResponsibleTable {
         };
 
         // init
-        this.init();
+        if (!this.defaults.debug) {
+            this.init();
+        }
     }
 
     // initiate & build
     init () {
         this.originalTables.map(function (table, index) {
-            this.cache.original.push(table.outerHTML);
+            // cache original state
+            this.cacheTable(table, 'oringial');
 
+            // not sure where this stuff should live, yet
+            var rows = this.getRows(table);
+            var columns = this.getColumns(table);
             var fragment = document.createDocumentFragment();
-            // -1 to account for th
-            var rows = table.querySelectorAll('tr');
-            var columns = rows[0].children;
 
-            // build referecne to column headings
-            for (var i = 0; i < columns.length; i++) {
-                this.columnHeadings.push(columns[i].innerHTML);
-            }
+            // initialise tableProp object
+            this.tableProps[index] = {rows: 0, columns: 0}
+            this.tableProps[index].rows = rows.length;
+            this.tableProps[index].columns = columns.length;
+            this.tableProps[index].headings = this.getTableHeadings(table, index);
 
-            fragment.appendChild(this.buildFirstRow(table));
+            // fragment.appendChild(this.buildFirstRow(table));
 
-            // loop through rows excluding the first and build out the data
-            for (var i = 1; i < rows.length; i++) {
-                fragment.appendChild(this.buildTableData(table, i));
-            }
+            // // loop through rows excluding the first and build out the data
+            // for (var i = 1; i < rows.length; i++) {
+            //     fragment.appendChild(this.buildTableData(table, i));
+            // }
 
-            // remove original first row
-            rows[0].parentNode.removeChild(rows[0]);
+            // // remove original first row
+            // rows[0].parentNode.removeChild(rows[0]);
 
-            // append fragment to container
-            table.querySelector('tbody').appendChild(fragment);
-            table.classList.add(this.defaults.activeClass);
+            // // append fragment to container
+            // table.querySelector('tbody').appendChild(fragment);
+            // table.classList.add(this.defaults.activeClass);
 
             // cache new table
             this.cache.responsible.push(table.outerHTML);
         }.bind(this));
+    }
+
+    /**
+    * Cache instance of table in current state as string
+    * @param {HTMLElement} table
+    **/
+    cacheTable (table) {
+        if (!table.classList.contains(this.defaults.activeClass)) {
+            this.cache.original.push(table.outerHTML);
+        }
+        else {
+            this.cache.responsible.push(table.outerHTML);
+        }
+    }
+
+    /**
+    * Get columns
+    * @param    {HTMLElement} table
+    * @return   {nodeList} columns
+    **/
+    getColumns (table) {
+        // potentially better way of getting this, maybe get largets row instead of assuming the first
+        var firstRow = this.getRows(table)[0];
+        return firstRow.children;
+    }
+
+    /**
+    * Get rows
+    * @param    {HTMLElement} table
+    * @return   {nodeList} rows
+    **/
+    getRows (table) {
+        return table.getElementsByTagName('tr');
+    }
+
+    /**
+    * Get column headings
+    * @param    {HTMLElement} table
+    * @return   {Array} column headings
+    **/
+    getTableHeadings (table, index) {
+        var headings = [];
+        console.log(this.tableProps[index].columns);
+        for (var i = 0; i < this.tableProps[index].columns; i++) {
+            console.log(table.getElementsByTagName('th')[i]);
+
+            headings.push(table.getElementsByTagName('th')[i].innerHTML);
+        }
+
+        return headings;
     }
 
     // first row will be first th

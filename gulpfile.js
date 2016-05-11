@@ -5,6 +5,7 @@ const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
 const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
+const mocha = require('gulp-mocha');
 
 const config = {
     package: 'responsibleTable',
@@ -14,12 +15,29 @@ const config = {
             dest: 'public/dist'
         }
     },
+    tests: {
+        src: 'tests'
+    },
     javascript: {
         src: 'src',
         dest: 'dist',
         public: 'public/javascript'
     }
 }
+
+gulp.task('tests', () => {
+    return gulp.src(`${config.tests.src}/index.js`)
+            .pipe(mocha({
+                require: {
+                    chai: require('chai'),
+                    expect: require('chai').expect
+                },
+                globals: {
+                    chai: require('chai'),
+                    expect: require('chai').expect
+                }
+            }));
+});
 
 gulp.task('javascript', () => {
     return gulp.src(`${config.javascript.src}/*.js`)

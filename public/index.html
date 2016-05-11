@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ResponsbibleTables</title>
+    <link rel="stylesheet" href="style/main.css">
+</head>
+<body>
+    <h1>ResponsibleTables.js</h1>
+
+    <table style="margin-bottom: 2rem;">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>sex</th>
+                <th>Favourite food</th>
+                <th>Job</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Mike</td>
+                <td>27</td>
+                <td>Male</td>
+                <td>Burgers</td>
+                <td>Developer</td>
+            </tr>
+            <tr>
+                <td>Toni</td>
+                <td>25</td>
+                <td>Female</td>
+                <td>Pizza</td>
+                <td>Nurse</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="container">
+        <table class='responsibleTable'>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>sex</th>
+                    <th>Favourite food</th>
+                    <th>Job</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Mike</td>
+                    <td>27</td>
+                    <td>Male</td>
+                    <td>Burgers</td>
+                    <td>Developer</td>
+                </tr>
+                <tr>
+                    <td>Toni</td>
+                    <td>25</td>
+                    <td>Female</td>
+                    <td>Pizza</td>
+                    <td>Nurse</td>
+                </tr>
+            </tbody>
+        </table>
+        <button id="restore">Restore</button>
+    </div>
+
+    <script src="javascript/responsibleTables.min.js"></script>
+    <script>
+        var t0 = performance.now();
+
+        var table = new ResponsibleTable();
+
+        var t1 = performance.now();
+
+        console.log(`Call to ResponsibleTable() took  ${Math.round(t1 - t0)} ms.`);
+
+        //debug
+        var restoreButton = document.getElementById('restore');
+
+        restoreButton.addEventListener('click', function () {
+            table.restore(table);
+        });
+    </script>
+</body>
+</html>

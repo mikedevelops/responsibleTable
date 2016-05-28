@@ -3,53 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <title>responsibleTables Tests</title>
-    <!--<style>.test-suite {display: none;}</style>-->
-    <link rel="stylesheet" href="../public/style/main.css">
+    <!-- <style>.test-suite {display: none;}</style> -->
+    <link rel="stylesheet" href="/public/style/main.css">
     <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet">
 </head>
 <body>
     <div id="mocha"></div>
     <div class="test-suite">
         <div id="t1">
-            <table id="table1">
-                <thead><tr><th>foo</th><th>bar</th></tr></thead>
-                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            <table id="table1" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
             </table>
         </div>
         <div id="t2">
-            <table id="table2">
-                <thead><tr><th>foo</th><th>bar</th></tr></thead>
-                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            <table id="table2" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
             </table>
         </div>
         <div id="t3">
-            <table id="table3">
-                <thead><tr><th>foo</th><th>bar</th></tr></thead>
-                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            <table id="table3" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
             </table>
         </div>
         <div id="t4">
-            <table id="table4">
-                <thead><tr><th>foo</th><th>bar</th></tr></thead>
-                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            <table id="table4" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
             </table>
         </div>
         <div id="t5">
-            <table id="table5">
-                <thead><tr><th>foo</th><th>bar</th></tr></thead>
-                <tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+            <table id="table5" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
             </table>
         </div>
+        <div id="t6">
+            <table id="table6" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="t7">
+            <table id="table7" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="t8">
+            <table id="table8" data-foo="bar">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th><th class="table__heading">foo</th><th class="table__heading">foo</th><th class="table__heading">foo</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td><td>bar</td><td>bar</td><td>bar</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td><td>bar</td><td>bar</td><td>bar</td></tr>
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td><td>bar</td><td>bar</td><td>bar</td></tr>
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td><td>bar</td><td>bar</td><td>bar</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="t9">
+            <table id="table9" table-index="0" class="table10">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="t10">
+            <table id="table10" table-index="1" class="table10">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="t11">
+            <table id="table10" table-index="1" class="table11">
+                <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                <tbody class="tbody">
+                    <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                    <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="container" style="width: 10px;">
+            <div id="t12">
+                <table id="table12" table-index="1">
+                    <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                    <tbody class="tbody">
+                        <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                        <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="container" id="t13Container" style="width: 100vw; max-width: 100%;">
+            <div id="t13">
+                <table id="table13" table-index="1">
+                    <thead class="thead"><tr class="table__row"><th class="table__heading">Name</th><th class="table__heading">Age</th><th class="table__heading">Job</th></tr></thead>
+                    <tbody class="tbody">
+                        <tr class="table__row"><td class="table__data">Mike</td><td class="table__data">27</td><td class="table__data">Developer</td></tr>
+                        <tr class="table__row"><td class="table__data">Toni</td><td class="table__data">25</td><td class="table__data">Nurse</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <script src="../src/responsibleTable.js"></script>
+    <script src="/src/responsibleTable.js"></script>
     <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
-    <script src="../node_modules/mocha/mocha.js"></script>
-    <script src="../node_modules/chai/chai.js"></script>
+    <script src="/node_modules/mocha/mocha.js"></script>
+    <script src="/node_modules/chai/chai.js"></script>
     <script>mocha.setup('bdd')</script>
-    <script src="./index.js"></script>
+    <script src="/tests/index.js"></script>
     <script>
         mocha.checkLeaks();
-        mocha.run();
+        mocha
+            .globals([ '___browserSync___oldSocketIo', 'io', '___browserSync___', 'key', 'secondKey' ])
+            .run();
     </script>
 </body>
 </html>

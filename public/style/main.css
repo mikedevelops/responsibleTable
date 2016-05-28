@@ -22,7 +22,7 @@ th {
 .container {
   border: 1px solid #f00;
   margin-bottom: 1rem;
-  max-width: 300px;
+  max-width: 600px;
 }
 
 .responsibleTable {
@@ -43,6 +43,10 @@ th {
 
 .responsibleTable--active td {
   width: 50%;
+}
+
+.responsibleTable--active tr {
+  width: 100%;
 }
 
 .responsibleTable__single-cell {

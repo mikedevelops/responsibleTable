@@ -1,0 +1,86 @@
+$base-font-size:                18px;
+$base-line-height:              24px;
+$line-height-ratio:             $base-line-height / $base-font-size;
+
+$space:                         $line-height-ratio * 1rem;         // 24px   -- 1.5rem
+$space-half:                    $space / 2;                        // 12px   -- .75rem
+$space-third:                   $space / 3;                        // 8px    -- .5rem
+$space-quarter:                 $space / 4;                        // 6px    -- .375em
+$space-fifth:                   $space / 5;                        // 4.8px  -- .3rem
+$space-sixth:                   $space-third / 2;                  // 4px    -- .25rem
+$space-eighth:                  $space / 8;                        // 3px    -- .1875rem
+$space-twelfth:                 $space-sixth / 2;                  // 2px    -- .125rem
+$space-two-thirds:              $space-third * 2;                  // 16px   -- 1rem
+$space-three-quarters:          $space - $space-quarter;           // 18px   -- 1.125rem
+$space-and-eighth:              $space + $space-eighth;            // 27px   -- 1.6875rem
+$space-and-sixth:               $space + $space-sixth;             // 28px   -- 1.75rem
+$space-and-fifth:               $space + $space-fifth;             // 28.8px -- 1.8rem
+$space-and-quarter:             $space + $space-quarter;           // 30px   -- 1.875em
+$space-and-third:               $space + $space-third;             // 32px   -- 2rem
+$space-and-half:                $space + $space-half;              // 36px   -- 2.25em
+$space-and-two-thirds:          $space + $space-two-thirds;        // 40px   -- 2.5em
+$space-and-three-quarters:      $space + $space-three-quarters;    // 42px   -- 2.625em
+$space-double:                  $space * 2;                        // 48px   -- 3rem
+$space-triple:                  $space * 3;                        // 72px   -- 4.5rem
+$space-quadruple:               $space * 4;                        // 96px   -- 6rem
+
+$font-base: 'Helvetica', sans-serif;
+
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-bold: 600;
+
+$full-width:                    1280px;
+$x-large-width:                 1020px;
+$large-width:                   960px;
+$mid-width:                     760px;
+$small-width:                   600px;
+$x-small-width:                 400px;
+
+/// Largest font size
+$giga-px:                       96px;
+$giga:                          $giga-px / $base-font-size * 1rem;
+
+/// Second largest font size
+$mega-px:                       72px;
+$mega:                          $mega-px / $base-font-size * 1rem;
+
+/// Third largest font size
+$kilo-px:                       48px;
+$kilo:                          $kilo-px / $base-font-size * 1rem;
+
+/// Fourth largest font size
+$alpha-px:                      40px;
+$alpha:                         $alpha-px / $base-font-size * 1rem;
+
+/// Fifth largest font size
+$beta-px:                       30px;
+$beta:                          $beta-px / $base-font-size * 1rem;
+
+/// Sixth largest font size
+$gamma-px:                      26px;
+$gamma:                         $gamma-px / $base-font-size * 1rem;
+
+/// Seventh largest font size
+$delta-px:                      22px;
+$delta:                         $delta-px / $base-font-size * 1rem;
+
+/// Eighth largest font size
+$epsilon-px:                    20px;
+$epsilon:                       $epsilon-px / $base-font-size * 1rem;
+
+/// Ninth largest font size
+$zeta-px:                       18px;
+$zeta:                          $zeta-px / $base-font-size * 1rem;
+
+/// Tenth largest font size
+$normalis-px:                   16px;
+$normalis:                      $normalis-px / $base-font-size * 1rem;
+
+/// Eleventh largest font size
+$milli-px:                      14px;
+$milli:                         $milli-px / $base-font-size * 1rem;
+
+/// Twelfth largest font size
+$micro-px:                      13px;
+$micro:                         $micro-px / $base-font-size * 1rem;

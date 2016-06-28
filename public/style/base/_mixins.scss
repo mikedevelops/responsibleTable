@@ -1,0 +1,430 @@
+// Mixins
+//
+// A set of usefull mixins and funcitons, which can be used thoughout your project
+// See sass/helpers/_mixins.scss.
+//
+// Styleguide 20
+
+
+// valueToRem($value)
+//
+// Function - converts a value to REM
+//
+// $value - value to be converted to REM
+//
+// Compatible in IE9+
+//
+// Styleguide 20.1
+@function valueToRem($value) {
+    @return ($value / $base-font-size * 1rem);
+}
+
+
+// valueToEm($value)
+//
+// Function - converts a value to EM
+//
+// $value - value to be converted to EM
+//
+// Styleguide 20.2
+@function valueToEm($value) {
+    @return ($value / $base-font-size * 1em);
+}
+
+
+// remToPx($value)
+//
+// Function - converts a rem-based value to px
+//
+// $value - rem-based value to be converted to px
+//
+// Styleguide 20.3
+@function remToPx($value) {
+    @return ($value / 1rem * $base-font-size);
+}
+
+
+// strip-units($number)
+//
+// Function - Remove the units from a given value.
+//
+// $number - value and unit
+//
+// Compatible in all browsers
+//
+// Styleguide 20.3
+@function strip-units($number) {
+    @return $number / ($number * 0 + 1);
+}
+
+
+// fontface($font-family, $file-path, $weight: normal, $style: normal)
+//
+// Mixin - Provides @fontface shorthand
+//
+// ```
+// .some-class {
+//     @include fontface('open sans', '/fonts')
+// }
+// ```
+//
+// $font-family - name of the font family
+// $file-path - path to the font files
+// $weight (normal) - font weight
+// $style (normal) - font-style
+//
+// Compatible in all browsers
+//
+// Styleguide 20.5
+@mixin fontface($font-family, $file-path, $weight: normal, $style: normal) {
+    @font-face {
+        font-family: $font-family;
+        font-weight: $weight;
+        font-style: $style;
+
+        src: url('#{$file-path}.eot');
+        src: url('#{$file-path}.eot?#iefix')    format('embedded-opentype'),
+        url('#{$file-path}.woff')          format('woff'),
+        url('#{$file-path}.ttf')           format('truetype');
+    }
+}
+
+
+// font-size($fs, $line-height: true, $multiplier: 1)
+//
+// Mixin - Calculates font, rem font size & line height
+//
+// ```
+// .some-class {
+//     @include font-size(18px, 2);
+// }
+// ```
+//
+// $fs - The font size
+// $file-path - path to the font files
+// $line-height (true) - Include line height or not. The line height parameter can also be used as the multiplier
+// $multiplier (1) - Multiplies line height by the given value
+//
+// Compatible in all browsers
+//
+// Styleguide 20.6
+@mixin font-size($fs, $line-height: true, $multiplier: 1) {
+    font-size: $fs / 1rem;
+
+    $use-line-height: false;
+
+    @if type-of($line-height) == bool {
+        @if $line-height == true {
+            $use-line-height: true;
+        }
+    }
+    @else if type-of($line-height) == number {
+        $use-line-height: true;
+        $multiplier: $line-height;
+    }
+
+    @if $use-line-height == true {
+        @if $use-vertical-rhythm == true {
+            line-height: (ceil($fs / $base-line-height) * $line-height-ratio) * $multiplier;
+        }
+        @else {
+            line-height: $line-height-ratio * $multiplier;
+        }
+    }
+}
+
+
+// truncate($truncation-boundary)
+//
+// Mixin - Truncate long strings
+//
+// ```
+// .some-class {
+//     @include truncate(100%);
+// }
+// ```
+//
+// Compatible in all browsers
+//
+// Styleguide 20.7
+@mixin truncate($truncation-boundary) {
+    max-width: $truncation-boundary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+// linearGradient($top, $bottom, $fallback: false)
+//
+// Mixin - Easily create background linear gradients, provides a fallback for older browsers.
+//
+// ```
+// .some-class {
+//     @include linearGradient(#636D0E, #9BB106);
+// }
+// .some-class {
+//     @include linearGradient(#636D0E, #9BB106, 'img/gradient.jpg');
+// }
+// ```
+//
+// $top - The colour to start with, at the top of the element
+// $bottom - The colour to fade to, at the botton of the element
+// $fallback (default: false) - provide a fallback image for older browsers
+//
+// Compatible in all browsers
+//
+// Styleguide 20.9
+@mixin linearGradient($top, $bottom, $fallback: false) {
+    background-color: $top; /* Old browsers */
+    @if $fallback {
+        background-image: url($fallback); /* fallback image */
+    }
+    background-image: linear-gradient(to bottom, $top 0%, $bottom 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$top}', endColorstr='#{$bottom}',GradientType=0); /* IE6-9 */
+}
+
+
+// respond-min($width)
+//
+// Mixin - An inline min-width media query generator with an old IE fallback, (sass wrapped in the mixin gets added to the old IE stylesheet)
+//
+// ```
+// .some-class {
+//     font-size: 2em;
+//     @include respond-min($small-width) {
+//         font-size: 1em;
+//     }
+// }
+// ```
+//
+// $width - the width you wish to use for the media query
+//
+// Compatible in all browsers
+//
+// Styleguide 20.10
+@mixin respond-min($width) {
+    @media screen and (min-width: $width) {
+        @content;
+    }
+}
+
+
+// respond-max($width)
+//
+// Mixin - An inline max-width (use with caution, stick to mobile first min-widths
+// where possible) media query generator with an old IE fallback (sass wrapped in
+// the mixin gets added to the old IE stylesheet)
+//
+// ```
+// .some-class {
+//     font-size: 2em;
+//     @include respond-max($small-width) {
+//         font-size: 1em;
+//     }
+// }
+// ```
+//
+// $width - the width you wish to use for the media query
+//
+// Compatible in all browsers
+//
+// Styleguide 20.11
+@mixin respond-max($width) {
+
+
+}
+
+
+// respond-min-and-max($min-width, $max-width)
+//
+// Mixin - An inline min-width and max-width (use with caution, stick to mobile first min-widths
+// where possible) media query generator with an old IE fallback (sass wrapped in
+// the mixin gets added to the old IE stylesheet)
+//
+// ```
+// .some-class {
+//     font-size: 2em;
+//     @include respond-min-and-max($small-width, $mid-width) {
+//         font-size: 1em;
+//     }
+// }
+// ```
+//
+// $min-width - the min width you wish to use for the media query
+// $max-width - the max width you wish to use for the media query
+//
+// Compatible in all browsers
+//
+// Styleguide 20.12
+@mixin respond-min-and-max($min-width, $max-width) {
+    @media screen and (min-width: $min-width) and (max-width: $max-width - 1) {
+        @content;
+    }
+}
+
+
+// css-arrow($size, $position, $color: inherit)
+//
+// Mixin - Adds a CSS arrow to an element
+//
+// ```
+// .some-class {
+//     @include cssArrow(20px, top, $black);
+// }
+// ```
+//
+// $size - size and unit of measurement (20px for example)
+// $position - left, right, top, bottom
+// $color - colour of arrow (white, #000000, default: inherit)
+//
+// Compatible in all browsers
+//
+// Styleguide 20.13
+@mixin css-arrow($size, $position, $color: inherit) {
+    position: relative;
+
+    &::before,
+    &::after {
+        border: solid transparent;
+        content: '';
+        height: 0;
+        pointer-events: none;
+        position: absolute;
+        width: 0;
+    }
+
+    &::after {
+        border-width: $size;
+    }
+
+    &::before {
+        border-width: $size + 2;
+    }
+
+    @if ($position) == 'top' {
+        &::before,
+        &::after {
+            bottom: 100%;
+            left: 50%;
+        }
+
+        &::after {
+            border-bottom-color: inherit;
+            border-width: $size;
+            margin-left: -$size;
+            padding-bottom: -1px;
+        }
+
+        &::before {
+            border-bottom-color: inherit;
+            margin-left: -($size + 2);
+        }
+    }
+
+    @if ($position) == 'right' {
+        &::before,
+        &::after {
+            left: 100%;
+            top: 50%;
+        }
+
+        &::after {
+            border-left-color: inherit;
+            margin-top: -$size;
+            padding-left: -1px;
+        }
+
+        &::before {
+            border-left-color: inherit;
+            margin-top: -($size + 2);
+        }
+    }
+
+    @if ($position) == 'bottom' {
+        &::before,
+        &::after {
+            left: 50%;
+            top: 100%;
+        }
+
+        &::after {
+            border-top-color: inherit;
+            margin-left: -$size;
+            padding-top: -1px;
+        }
+
+        &::before {
+            border-top-color: inherit;
+            margin-left: -($size + 2);
+        }
+    }
+
+    @if ($position) == 'left' {
+        &::before,
+        &::after {
+            right: 100%;
+            top: 50%;
+        }
+
+        &::after {
+            border-right-color: inherit;
+            margin-top: -$size;
+            padding-right: -1px;
+        }
+
+        &::before {
+            border-right-color: inherit;
+            margin-top: -($size + 2);
+        }
+    }
+}
+
+
+// widget-width()
+//
+// Mixin - Create a grid for widgets so their widths snap to a sensible grid.
+//
+// ```
+// @include respond-min($mid-width) {
+//     @include with-layout(inside) {
+//         @include widget-width;
+//     }
+// }
+// ```
+//
+// pulls snap points from sass-map var `$widget-grid`
+//
+// Compatible in all browsers > ie7
+//
+// Styleguide 20.14
+@mixin widget-width() {
+    @each $points in $widget-grid {
+        $snap: index($widget-grid, $points);
+        $selector: '';
+        @for $i from nth($points, 1) through nth($points, 2) {
+            $selector: '.widget-width--#{$i}, #{$selector}';
+        }
+
+        #{$selector} {
+            width: span($snap);
+        }
+    }
+}
+
+
+/**
+ * Hide only visually, but have it available for screenreaders
+ * as per: http://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+*/
+@mixin visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+

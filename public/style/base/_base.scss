@@ -1,0 +1,22 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font: #{($base-font-size / 16px) * .85em} / #{$line-height-ratio} $font-base;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100%;
+
+    @include respond-min($small-width) {
+        font-size: #{($base-font-size / 16px) * .9em};
+    }
+
+    @include respond-min($large-width) {
+        font-size: #{($base-font-size / 16px) * 1em};
+    }
+}
+
+body {
+    //background-color: $color-primary;
+}

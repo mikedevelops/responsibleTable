@@ -1,0 +1,71 @@
+form {
+    background-color: $color-grey-light;
+    border: 1px solid mix($color-black, $color-grey-light, 10%);
+    border-radius: 3px;
+    display: inline-block;
+    padding: $space-and-third $space;
+    text-align: center;
+    width: 100%;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+label {
+    font-weight: $font-weight-bold;
+}
+
+input {
+    border: 1px solid mix($color-black, $color-grey-light, 10%);
+    border-radius: 3px;
+}
+
+input[type="submit"] {
+    background-color: $color-primary;
+    border: 1px solid mix($color-black, $color-primary, 10%);
+    color: $color-white;
+    font-weight: $font-weight-bold;
+    padding: $space-half;
+    width: auto;
+}
+
+input[type="range"] {
+    margin-right: $space;
+    width: 70%;
+}
+
+.form__control {
+    margin-bottom: $space-half;
+}
+
+.form__control--submit {
+    //margin-left: auto;
+    //text-align: left;
+    //width: 50%;
+}
+
+.form__control--radio label {
+    font-weight: $font-weight-normal;
+}
+
+.form__control--radio label,
+.form__control--radio input {
+    width: auto;
+}
+
+.form__label--radio {
+    font-weight: $font-weight-bold;
+    margin: 0 0 $space-half;
+}
+
+.form-mode {
+    opacity: .5;
+}
+
+.form-mode--active {
+    opacity: 1;
+}
+

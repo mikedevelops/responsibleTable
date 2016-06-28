@@ -1,0 +1,15 @@
+.header {
+    color: $color-black;
+    padding: $space-double $space;
+    text-align: center;
+}
+
+.header__headline {
+    margin: 0 0 $space-quarter;
+}
+
+.header__subtitle {
+    font-size: $zeta;
+    font-weight: $font-weight-normal;
+    margin: 0 0 $space;
+}

@@ -1,52 +1,79 @@
-// TODO
-// public method for returning table(s)
-class ResponsibleTable {
+// TODO public method for returning table(s)
+// TODO: handle tfoot
+// TODO: handle tables with no th's
+// TODO: handle duplicate ID's
+
+export default class ResponsibleTable {
     constructor (options) {
         // defaults
         this.defaults = {
             activeClass: 'responsibleTable--active',
             columnHeadingClass: 'responsibleTable__column-heading',
             containerSelector: '.container',
+            debounceRate: 200,
             subHeadingClass: 'responsibleTable__sub-heading',
             tableDataClass: 'responsibleTable__table-data',
             tableSelector: '.responsibleTable',
             debug: false
-        }
+        };
         // merge options and defaults
         this.extendDefaults(options, this.defaults);
         // vars
         this.originalTables = [].slice.call(document.querySelectorAll(this.defaults.tableSelector));
         this.tableData = [];
-        this.columnHeadings = [];
+        this.testData = {
+            start: 0,
+            finish: 0,
+            result () {
+                return Math.round(this.finish - this.start) ? `${Math.round(this.finish - this.start)}` : '< 1';
+            }
+        };
+        this.registerEvents();
         this.init();
     }
 
     /**
-    * Loop through  original tables array and conditionally build responsible tables
-    * @param {bool} force responsible table to build
-    **/
+     * initiate data, cache table, build / not build
+     * @param force {boolean}
+     */
     init (force = false) {
-        this.originalTables.map((table, index) => {
+        this.originalTables.forEach((table, index) => {
             // create tableData object per instance
             this.initiateTableData(table, index);
+
+            console.log(this.tableData);
             // cache original state
             if (!this.tableData[index].cache.original) {
                 this.cacheTable(table, index);
             }
             // to build or not to build...
-            if (!this.defaults.debug || force) {
-                this.tableData[index].isResponsible = this.build(table, index, force);
-            }
+            // this.build(table, index, force);
         });
     }
 
     /**
-    * Cache instance of table in current state as string
-    * @param {HTMLElement} table
-    **/
-    cacheTable (table, index, isResponsible) {
-        // TODO: classlist fallback
-        if (!table.classList.contains(this.defaults.activeClass)) {
+     * refresh table state, update table & container width, build / not build
+     */
+    refresh () {
+        this.originalTables.forEach((table, index) => {
+            this.tableData[index].currentWidth = this.tableData[index].node.getBoundingClientRect().width;
+
+            if (this.tableData[index].container.node) {
+                this.tableData[index].container.width = this.tableData[index].container.node.getBoundingClientRect().width;
+            }
+
+            // to build or not to build...
+            this.build(table, index);
+        });
+    }
+
+    /**
+     * cache original & responsible version of table outerHTML
+     * @param table {Element}
+     * @param index {int}
+     */
+    cacheTable (table, index) {
+        if (!this.tableData[index].isResponsible) {
             this.tableData[index].cache.original = table.outerHTML;
         }
         else {
@@ -55,12 +82,17 @@ class ResponsibleTable {
     }
 
     /**
-    * Initiate table data
-    **/
+     * create table data object
+     * @param table {Element}
+     * @param index {int}
+     */
     initiateTableData (table, index) {
-        // Setup tableData
         this.tableData[index] = {
+            currentWidth: 0,
             isResponsible: false,
+            hasChanged: false,
+            minWidth: 0,
+            node: null,
             cache: {
                 original: '',
                 responsible: ''
@@ -84,6 +116,10 @@ class ResponsibleTable {
             fragment: null
         };
 
+        // original table node
+        this.tableData[index].node = table;
+        // width
+        this.tableData[index].currentWidth = table.getBoundingClientRect().width;
         // rows
         this.tableData[index].rows.nodes = this.getRows(table);
         this.tableData[index].rows.length = this.tableData[index].rows.nodes.length;
@@ -94,7 +130,6 @@ class ResponsibleTable {
         this.tableData[index].headings.titles = this.getTableHeadings(table, index);
         // container
         this.tableData[index].container.node = document.querySelector(this.defaults.containerSelector) || null;
-
         if (this.tableData[index].container.node) {
             this.tableData[index].container.width = this.tableData[index].container.node.getBoundingClientRect().width;
         }
@@ -103,16 +138,19 @@ class ResponsibleTable {
     }
 
     /**
-    * To build or not to build, that is the question...
-    * @apram    {HTLMElement} table
-    * @param    {int} table index
-    * @return   {bool} has table been built
-    **/
-    build (table, tableIndex, force) {
-        const tableWidth = table.getBoundingClientRect().width;
-        // if table is wider, container is null or force is true -> build responsible table
-        if (tableWidth > this.tableData[tableIndex].container.width || !this.tableData[tableIndex].container.node || force) {
-            // create tablefragment
+     * build responsible table
+     * @param table {Element}
+     * @param tableIndex {int}
+     * @returns {boolean}
+     */
+    build (table, tableIndex) {
+        console.log('building...');
+
+        this.testData.start = performance.now();
+
+        if (!this.tableData[tableIndex].hasChanged) {
+            this.tableData[tableIndex].minWidth = this.tableData[tableIndex].currentWidth;
+            // create table fragment
             this.tableData[tableIndex].fragment = document.createDocumentFragment();
             // append first row to fragment
             this.tableData[tableIndex].fragment.appendChild(this.buildFirstRow(table, tableIndex));
@@ -122,7 +160,7 @@ class ResponsibleTable {
                     this.tableData[tableIndex].fragment.appendChild(this.buildTableData(table, tableIndex, index));
                 }
             });
-            // clone oriingal table node, excluding children
+            // clone original table node, excluding children
             const newTable = table.cloneNode(false);
             // append fragment to cloned node
             newTable.appendChild(this.tableData[tableIndex].fragment);
@@ -130,41 +168,50 @@ class ResponsibleTable {
             table.innerHTML = newTable.innerHTML;
             // TODO: classList fallback
             table.classList.add(this.defaults.activeClass);
-            // cache new table
+            // update config with new node
+            this.tableData[tableIndex].node = table;
+            // record state change
+            this.tableData[tableIndex].hasChanged = true;
+            this.tableData[tableIndex].isResponsible = true;
+
             if (!this.tableData[tableIndex].cache.responsible) {
                 this.cacheTable(table, tableIndex);
             }
-
-            return true;
         }
+        // restore responsible table from cache if we have cached it
         else {
-            return false;
+            this.tableData[tableIndex].node.outerHTML = this.tableData[tableIndex].cache.responsible;
+            // TODO Do we need this node reference
+            this.tableData[tableIndex].node = document.querySelector(this.defaults.tableSelector);
+            this.tableData[tableIndex].isResponsible = true;
         }
+
+        this.testData.finish = performance.now();
     }
 
     /**
-    * Get columns
-    * @param    {HTMLElement} table
-    * @return   {nodeList} columns
-    **/
+     * get table columns
+     * @param table {Element}
+     * @returns {array}
+     */
     getColumns (table) {
-        // potentially better way of getting this, maybe get largets row instead of assuming the first
+        // potentially better way of getting this, maybe get largest row instead of assuming the first
         const firstRow = this.getRows(table)[0];
         return [].slice.call(firstRow.children);
     }
 
     /**
-    * Get rows
-    * @param    {HTMLElement} table
-    * @return   {nodeList} rows
-    **/
-    getRows (table) {
+     * get table rows
+     * @param table {Element}
+     * @returns {array}
+     */
+     getRows (table) {
         return [].slice.call(table.getElementsByTagName('tr'));
     }
 
     /**
     * Get column headings
-    * @param    {HTMLElement} table
+    * @param    {Element} table
     * @return   {Array} column headings
     **/
     getTableHeadings (table, index) {
@@ -178,11 +225,11 @@ class ResponsibleTable {
     }
 
     /**
-    * Build first row
-    * @param    {HTMLElement} table
-    * @param    {int} table index
-    * @return   {HTMLElement} table row
-    **/
+     * build first row of responsible table
+     * @param table {Element}
+     * @param index {int}
+     * @returns {Element}
+     */
     buildFirstRow (table, index) {
         // this might not be a th, fix that
         const firstCell = table.querySelector('th');
@@ -190,26 +237,26 @@ class ResponsibleTable {
         const thisCell = document.createElement('th');
 
         thisCell.innerHTML = firstCell.innerHTML;
-        thisCell.setAttribute('colspan', this.tableData[index].columns.length);
+        thisCell.setAttribute('colspan', 2);
         firstRow.appendChild(thisCell);
 
         return firstRow;
     }
 
     /**
-    * Build table data
-    * @param    {HTMLElement} table
-    * @param    {int} table index
-    * @param    {int} row index
-    * @return   {HTMLFragment} fragment containing table data
-    **/
+     * build table data
+     * @param table {Element}
+     * @param tableIndex {int}
+     * @param rowIndex {int}
+     * @returns {DocumentFragment}
+     */
     buildTableData (table, tableIndex, rowIndex) {
         const fragment = document.createDocumentFragment();
         const firstRow = document.createElement('tr');
         const cells = this.tableData[tableIndex].rows.nodes[rowIndex].querySelectorAll('td');
         const firstCell = cells[0];
         // append first cell as data heading
-        firstCell.setAttribute('colspan', this.tableData[tableIndex].columns.length);
+        firstCell.setAttribute('colspan', 2);
         // TODO: fallback for ie9
         firstCell.classList.add(this.defaults.subHeadingClass);
         firstRow.appendChild(firstCell);
@@ -236,29 +283,55 @@ class ResponsibleTable {
     }
 
     /**
-    * restore original table HTML
-    * if no index argument is provided, restore all instances
-    * @param {int} table index (optional)
-    **/
+     * toggle table state and restore
+     * @param index {int || null}
+     */
     restoreTable (index = null) {
+        this.testData.start = performance.now();
+
+        console.log('restoring...');
         // if no index provided restore all tables
         if (index === null) {
-            this.originalTables.map((table, index) => {
-                table.outerHTML = this.tableData[index].cache.original;
+            this.originalTables.forEach((table, index) => {
+                if (this.tableData[index].isResponsible) {
+                    table.outerHTML = this.tableData[index].cache.original;
+                    this.tableData[index].isResponsible = false;
+                    // TODO: Do we need this new node reference?
+                    this.tableData[index].node = [].slice.call(document.querySelectorAll(this.defaults.tableSelector))[index];
+                }
+                else {
+                    table.outerHTML = this.tableData[index].cache.responsible;
+                    this.tableData[index].isResponsible = true;
+                    // TODO: Do we need this new node reference?
+                    this.tableData[index].node = [].slice.call(document.querySelectorAll(this.defaults.tableSelector))[index];
+                }
             });
         }
         // restore table index
         // TODO: perhaps need a method to return a table index,
         // how would a user know the table index?
         else {
-            this.originalTables[index].outerHTML = this.tableData[index].cache.original;
+            if (this.tableData[index].isResponsible) {
+                this.tableData[index].isResponsible = false;
+                this.tableData[index].node.outerHTML = this.tableData[index].cache.original;
+                // TODO Do we need this node reference
+                this.tableData[index].node = document.querySelector(this.defaults.tableSelector);
+            }
+            else {
+                this.tableData[index].isResponsible = true;
+                this.tableData[index].node.outerHTML = this.tableData[index].cache.responsible;
+                // TODO Do we need this node reference
+                this.tableData[index].node = document.querySelector(this.defaults.tableSelector);
+            }
         }
+
+        this.testData.finish = performance.now();
     }
 
     /**
     * merge options & default objects
-    * @param    {obj} options
-    * @param    {obj} defaults
+    * @param    {object} options
+    * @param    {object} defaults
     **/
     extendDefaults (options, defaults) {
         if (typeof options === 'object') {
@@ -268,5 +341,32 @@ class ResponsibleTable {
                 }
             }
         }
+    }
+
+    /**
+    * de-bounce and add window resize
+    **/
+    registerEvents () {
+        window.addEventListener('resize', this.debounce(() => {
+            this.refresh();
+        }, this.defaults.debounceRate));
+    }
+
+    /**
+    * event de-bounce taken from Underscore.js
+    **/
+    debounce (func, wait, immediate) {
+        let timeout;
+        return () => {
+            const context = this, args = arguments;
+            const later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
     }
 }

@@ -2,86 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ResponsbibleTables</title>
-    <link rel="stylesheet" href="style/main.css">
+    <title>ResponsbibleTable</title>
+    <link rel="stylesheet" href="/public/dist/main.min.css">
+    <link rel="stylesheet" href="/public/style/main.css">
 </head>
 <body>
-    <h1>ResponsibleTables.js</h1>
+    <header class="header">
+        <h1 class="header__headline">ResponsibleTable.js</h1>
+        <h2 class="header__subtitle">A responsible solution for responsive HTML tables</h2>
+    </header>
 
-    <table style="margin-bottom: 2rem;">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Age</th>
-                <th>sex</th>
-                <th>Favourite food</th>
-                <th>Job</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Mike</td>
-                <td>27</td>
-                <td>Male</td>
-                <td>Burgers</td>
-                <td>Developer</td>
-            </tr>
-            <tr>
-                <td>Toni</td>
-                <td>25</td>
-                <td>Female</td>
-                <td>Pizza</td>
-                <td>Nurse</td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="container">
-        <table class='responsibleTable'>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>sex</th>
-                    <th>Favourite food</th>
-                    <th>Job</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Mike</td>
-                    <td>27</td>
-                    <td>Male</td>
-                    <td>Burgers</td>
-                    <td>Developer</td>
-                </tr>
-                <tr>
-                    <td>Toni</td>
-                    <td>25</td>
-                    <td>Female</td>
-                    <td>Pizza</td>
-                    <td>Nurse</td>
-                </tr>
-            </tbody>
-        </table>
-        <button id="restore">Restore</button>
-    </div>
+    <main id="main" class="main-content">
+        <div id="generatedUIContainer">
+            <form action="/" id="tableGenerator">
+                <fieldset>
+                    <p class="form__label--radio">Form Mode</p>
+                    <div class="radio-group" id="formModeGroup">
+                        <label for="htmlRadio">HTML Entry</label>
+                        <input type="radio" id="htmlRadio" value="html" name="formMode" checked>
+                        <label for="autoRadio">Auto</label>
+                        <input type="radio" id="autoRadio" value="auto" name="formMode">
+                    </div>
+                </fieldset>
+                <div class="form-mode form-mode--html form-mode--active">
+                    <fieldset>
+                        <label for="htmlEntry">HTML Entry</label>
+                        <textarea name="htmlEntry" id="htmlEntry" cols="30" rows="10"></textarea>
+                    </fieldset>
+                </div>
+                <div class="form-mode form-mode--auto">
+                    <fieldset class="form__control">
+                        <label for="rowCount">Rows</label>
+                        <input type="number" id="rowCount" value="5" disabled>
+                    </fieldset>
+                    <fieldset class="form__control">
+                        <label for="columnCount">Columns</label>
+                        <input type="number" id="columnCount" value="5" disabled>
+                    </fieldset>
+                    <fieldset class="form__control form__control--radio">
+                        <p class="form__label--radio">Responsive</p>
+                        <div class="radio-group">
+                            <label for="yes">yes</label>
+                            <input type="radio" id="yes" value="yes" name="responsive" disabled>
+                            <label for="no">no</label>
+                            <input type="radio" id="no" value="no" name="responsive" checked disabled>
+                        </div>
+                    </fieldset>
+                </div>
+                <fieldset class="form__control">
+                    <label for="containerWidth">Container Width</label>
+                    <div class="range-group">
+                        <input type="range" min="0" max="100" id="containerWidth" value="100">
+                        <span id="containerWidthOutput"></span>
+                    </div>
+                </fieldset>
+                <fieldset class="form__control--submit">
+                    <input type="submit" value="Generate">
+                </fieldset>
+            </form>
+            </div><div id="console" class="console">
+            <p id="time" class="console__output">Generate a table to measure performance...</p>
+        </div><div id="generatedContainer">
+            <!-- generated table goes here -->
+        </div>
+    </main>
 
-    <script src="javascript/responsibleTable.min.js"></script>
-    <script>
-        var t0 = performance.now();
-
-        var table = new ResponsibleTable();
-
-        var t1 = performance.now();
-
-        console.log(`Call to ResponsibleTable() took  ${Math.round(t1 - t0)} ms.`);
-
-        //debug
-        var restoreButton = document.getElementById('restore');
-
-        restoreButton.addEventListener('click', function () {
-            table.restore(table);
-        });
-    </script>
+    <script src="/public/dist/build.js"></script>
 </body>
 </html>

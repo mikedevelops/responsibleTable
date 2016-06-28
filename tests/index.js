@@ -66,7 +66,10 @@ describe('Methods', function () {
         var table = document.getElementById('table6');
         var plugin = new ResponsibleTable({tableSelector: '#table6', debug: true});
         var expected = {
+            currentWidth: 0,
             isResponsible: false,
+            minWidth: 0,
+            node: null,
             cache: {
                 original: '',
                 responsible: ''
@@ -145,27 +148,6 @@ describe('Methods', function () {
 
         expect(actual).to.equal(expected);
         expect(actual2).to.not.equal(expected2);
-    });
-
-    it ('extendDefaults() combines options and defaults', function () {
-        var table = document.getElementById('table11');
-        var plugin = new ResponsibleTable({
-            activeClass: 'fooBar'
-        });
-
-        var expected = {
-            activeClass: 'fooBar',
-            columnHeadingClass: 'responsibleTable__column-heading',
-            containerSelector: '.container',
-            subHeadingClass: 'responsibleTable__sub-heading',
-            tableDataClass: 'responsibleTable__table-data',
-            tableSelector: '.responsibleTable',
-            debug: false
-        }
-
-        var actual = plugin.defaults;
-
-        expect(JSON.stringify(actual)).to.equal(JSON.stringify(expected));
     });
 });
 

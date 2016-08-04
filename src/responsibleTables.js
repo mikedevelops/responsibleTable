@@ -5,6 +5,8 @@
 
 class ResponsibleTables {
     constructor (options) {
+        ResponsibleTables.VERSION = 0.1.0
+
         // defaults
         this.defaults = {
             activeClass: 'responsibleTable--active',

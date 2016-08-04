@@ -16,6 +16,13 @@ var ifElse = require('gulp-if-else');
 
 var isDev = !argv.prod;
 
+var config = {
+    browserify: {
+        debug: true,
+        standalone: 'ResponsibleTables'
+    }
+};
+
 // compile scss
 gulp.task('scss', function () {
     return gulp
@@ -33,7 +40,7 @@ gulp.task('scss', function () {
 
 gulp.task('javascript', function () {
     // wrap in watchify for liveupdate
-   var bundler = browserify('./src/responsibleTables.js', { debug: true }).transform(babel.configure({
+   var bundler = browserify('./src/responsibleTables.js', config.browserify).transform(babel.configure({
         presets: ["es2015"]
     }));
 
@@ -48,7 +55,7 @@ gulp.task('javascript', function () {
 
 gulp.task('javascript:prod', function () {
     // wrap in watchify for liveupdate
-   var bundler = browserify('./src/responsibleTables.js', { debug: false }).transform(babel.configure({
+   var bundler = browserify('./src/responsibleTables.js', config.browserify).transform(babel.configure({
         presets: ["es2015"]
     }));
 

@@ -5,7 +5,7 @@
 
 class ResponsibleTables {
     constructor (options) {
-        ResponsibleTables.VERSION = '0.1.1';
+        ResponsibleTables.VERSION = '0.1.2';
 
         // defaults
         this.defaults = {
@@ -47,7 +47,7 @@ class ResponsibleTables {
                 this.cacheTable(table, index);
             }
             // to build or not to build...
-            // this.build(table, index, force);
+            this.build(table, index, force);
         });
     }
 

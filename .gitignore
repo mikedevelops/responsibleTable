@@ -1,2 +1,4 @@
 node_modules
 public/dist/**/*
+/public/dist/build.js.map
+/public/dist/build.js

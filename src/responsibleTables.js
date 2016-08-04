@@ -3,6 +3,10 @@
 // TODO: handle tables with no th's
 // TODO: handle duplicate ID's
 
+require('classlist-polyfill');
+
+var _defaultsDeep = require('lodash.defaultsDeep');
+
 class ResponsibleTables {
     constructor (options) {
         ResponsibleTables.VERSION = '1.0.4';
@@ -18,10 +22,11 @@ class ResponsibleTables {
             tableSelector: '.responsibleTable',
             debug: false
         };
-        // merge options and defaults
-        this.extendDefaults(options, this.defaults);
+        this.options = {};
+        this.options = _defaultsDeep(this.options, options, this.defaults);
+        
         // vars
-        this.originalTables = [].slice.call(document.querySelectorAll(this.defaults.tableSelector));
+        this.originalTables = [].slice.call(document.querySelectorAll(this.options.tableSelector));
         this.tableData = [];
         this.testData = {
             start: 0,
@@ -145,7 +150,7 @@ class ResponsibleTables {
         // headings
         this.tableData[index].headings.titles = this.getTableHeadings(table, index);
         // container
-        this.tableData[index].container.node = document.querySelector(this.defaults.containerSelector) || null;
+        this.tableData[index].container.node = document.querySelector(this.options.containerSelector) || null;
         if (this.tableData[index].container.node) {
             this.tableData[index].container.width = this.tableData[index].container.node.getBoundingClientRect().width;
         }
@@ -160,7 +165,9 @@ class ResponsibleTables {
      * @returns {boolean}
      */
     build (table, tableIndex) {
-        this.testData.start = performance.now();
+        if (this.options.debug) {
+            this.testData.start = performance.now();
+        }
 
         if (!this.tableData[tableIndex].hasChanged) {
                 // create table fragment
@@ -180,7 +187,7 @@ class ResponsibleTables {
                 // switch out innerHTML of old table for new
                 table.innerHTML = newTable.innerHTML;
                 // TODO: classList fallback
-                table.classList.add(this.defaults.activeClass);
+                table.classList.add(this.options.activeClass);
                 // update config with new node
                 this.tableData[tableIndex].node = table;
                 // record state change
@@ -195,11 +202,13 @@ class ResponsibleTables {
         else {
             this.tableData[tableIndex].node.outerHTML = this.tableData[tableIndex].cache.responsible;
             // TODO Do we need this node reference
-            this.tableData[tableIndex].node = document.querySelector(this.defaults.tableSelector);
+            this.tableData[tableIndex].node = document.querySelector(this.options.tableSelector);
             this.tableData[tableIndex].isResponsible = true;
         }
 
-        this.testData.finish = performance.now();
+        if (this.options.debug) {
+            this.testData.finish = performance.now();
+        }
     }
 
     /**
@@ -271,7 +280,7 @@ class ResponsibleTables {
         // append first cell as data heading
         firstCell.setAttribute('colspan', 2);
         // TODO: fallback for ie9
-        firstCell.classList.add(this.defaults.subHeadingClass);
+        firstCell.classList.add(this.options.subHeadingClass);
         firstRow.appendChild(firstCell);
         fragment.appendChild(firstRow);
         // loop through each column exluding first and populate data
@@ -283,10 +292,10 @@ class ResponsibleTables {
                 heading.innerHTML = this.tableData[tableIndex].headings.titles[index];
                 // TODO: this might not be a 'th', fix that
                 // TODO: classlist fallback
-                heading.classList.add(this.defaults.columnHeadingClass);
+                heading.classList.add(this.options.columnHeadingClass);
                 row.appendChild(heading);
                 // TODO: classlist fallback
-                cells[index].classList.add(this.defaults.tableDataClass);
+                cells[index].classList.add(this.options.tableDataClass);
                 row.appendChild(cells[index]);
                 fragment.appendChild(row);
             }
@@ -300,7 +309,10 @@ class ResponsibleTables {
      * @param index {int || null}
      */
     restoreTable (index = null) {
-        this.testData.start = performance.now();
+        if (this.options.debug) {
+            this.testData.start = performance.now();
+        }
+
         // if no index provided restore all tables
         if (index === null) {
             this.originalTables.forEach((table, index) => {
@@ -308,13 +320,13 @@ class ResponsibleTables {
                     table.outerHTML = this.tableData[index].cache.original;
                     this.tableData[index].isResponsible = false;
                     // TODO: Do we need this new node reference?
-                    this.tableData[index].node = [].slice.call(document.querySelectorAll(this.defaults.tableSelector))[index];
+                    this.tableData[index].node = [].slice.call(document.querySelectorAll(this.options.tableSelector))[index];
                 }
                 else {
                     table.outerHTML = this.tableData[index].cache.responsible;
                     this.tableData[index].isResponsible = true;
                     // TODO: Do we need this new node reference?
-                    this.tableData[index].node = [].slice.call(document.querySelectorAll(this.defaults.tableSelector))[index];
+                    this.tableData[index].node = [].slice.call(document.querySelectorAll(this.options.tableSelector))[index];
                 }
             });
         }
@@ -326,17 +338,19 @@ class ResponsibleTables {
                 this.tableData[index].isResponsible = false;
                 this.tableData[index].node.outerHTML = this.tableData[index].cache.original;
                 // TODO Do we need this node reference
-                this.tableData[index].node = document.querySelector(this.defaults.tableSelector);
+                this.tableData[index].node = document.querySelector(this.options.tableSelector);
             }
             else {
                 this.tableData[index].isResponsible = true;
                 this.tableData[index].node.outerHTML = this.tableData[index].cache.responsible;
                 // TODO Do we need this node reference
-                this.tableData[index].node = document.querySelector(this.defaults.tableSelector);
+                this.tableData[index].node = document.querySelector(this.options.tableSelector);
             }
         }
 
-        this.testData.finish = performance.now();
+        if (this.options.debug) {
+            this.testData.finish = performance.now();
+        }
     }
 
     /**
@@ -360,7 +374,7 @@ class ResponsibleTables {
     registerEvents () {
         window.addEventListener('resize', this.debounce(() => {
             this.refresh();
-        }, this.defaults.debounceRate));
+        }, this.options.debounceRate));
     }
 
     /**

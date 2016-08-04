@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>ResponsbibleTable</title>
     <link rel="stylesheet" href="/public/dist/main.min.css">
-    <link rel="stylesheet" href="/public/style/main.css">
+    <link rel="stylesheet" href="/src/style/main.css">
 </head>
 <body>
     <header class="header">
@@ -13,56 +13,68 @@
     </header>
 
     <main id="main" class="main-content">
-        <div id="generatedUIContainer">
-            <form action="/" id="tableGenerator">
-                <fieldset>
-                    <p class="form__label--radio">Form Mode</p>
-                    <div class="radio-group" id="formModeGroup">
-                        <label for="htmlRadio">HTML Entry</label>
-                        <input type="radio" id="htmlRadio" value="html" name="formMode" checked>
-                        <label for="autoRadio">Auto</label>
-                        <input type="radio" id="autoRadio" value="auto" name="formMode">
+        <div id="generatedUIContainer" class="table-generator">
+            <form action="/" id="tableGenerator" class="table-generator__form">
+                <h2 class="form__heading">Table Mode</h2>
+                <fieldset class="form__control">
+                    <div class="form__radio-group" id="formModeGroup">
+                        <label class="form__label form__label--radio" for="htmlRadio">
+                            <span class="form__label--text">HTML Entry</span>
+                            <input type="radio" id="htmlRadio" value="html" name="formMode" checked>
+                        </label>
+                        <label class="form__label form__label--radio" for="autoRadio">
+                            <span class="form__label--text">Generate Table</span>
+                            <input type="radio" id="autoRadio" value="auto" name="formMode">
+                        </label>
+                        <label class="form__label form__label--radio" for="exampleRadio">
+                            <span class="form__label--text">Example Table</span>
+                            <input type="radio" id="exampleRadio" value="example" name="formMode">
+                        </label>
                     </div>
                 </fieldset>
                 <div class="form-mode form-mode--html form-mode--active">
-                    <fieldset>
-                        <label for="htmlEntry">HTML Entry</label>
-                        <textarea name="htmlEntry" id="htmlEntry" cols="30" rows="10"></textarea>
+                    <fieldset class="form__control">
+                        <label class="form__label form__label--textarea" for="htmlEntry">HTML Entry</label>
+                        <textarea class="form__textarea"  name="htmlEntry" id="htmlEntry"></textarea>
                     </fieldset>
                 </div>
                 <div class="form-mode form-mode--auto">
-                    <fieldset class="form__control">
-                        <label for="rowCount">Rows</label>
-                        <input type="number" id="rowCount" value="5" disabled>
-                    </fieldset>
-                    <fieldset class="form__control">
-                        <label for="columnCount">Columns</label>
-                        <input type="number" id="columnCount" value="5" disabled>
-                    </fieldset>
-                    <fieldset class="form__control form__control--radio">
-                        <p class="form__label--radio">Responsive</p>
-                        <div class="radio-group">
-                            <label for="yes">yes</label>
-                            <input type="radio" id="yes" value="yes" name="responsive" disabled>
-                            <label for="no">no</label>
-                            <input type="radio" id="no" value="no" name="responsive" checked disabled>
+                    <fieldset class="form__control form__control--2-up">
+                        <div class="form__input-group">
+                            <label class="form__label" for="rowCount">Rows</label>
+                            <input type="number" id="rowCount" value="5" name="tableCount">
+                        </div><div class="form__input-group">
+                            <label class="form__label" for="columnCount">Columns</label>
+                            <input type="number" id="columnCount" value="5" name="tableCount">
                         </div>
                     </fieldset>
+                    <!--<fieldset class="form__control form__control&#45;&#45;radio">-->
+                        <!--<p class="form__label&#45;&#45;radio">Responsive</p>-->
+                            <!--<div class="form__input-group form__input-group&#45;&#45;radio">-->
+                                <!--<label class="form__label" for="yes">yes</label>&lt;!&ndash;-->
+                                <!--&ndash;&gt;<input type="radio" id="yes" value="yes" name="responsive">-->
+                            <!--</div><div class="form__input-group form__input-group&#45;&#45;radio">-->
+                                <!--<label class="form__label" for="no">no</label>&lt;!&ndash;-->
+                                <!--&ndash;&gt;<input type="radio" id="no" value="no" name="responsive" checked>-->
+                            <!--</div>-->
+                    <!--</fieldset>-->
                 </div>
                 <fieldset class="form__control">
-                    <label for="containerWidth">Container Width</label>
+                    <label class="form__label" for="containerWidth">Container Width</label>
                     <div class="range-group">
-                        <input type="range" min="0" max="100" id="containerWidth" value="100">
-                        <span id="containerWidthOutput"></span>
+                        <input class="form__range" type="range" min="0" max="100" id="containerWidth" value="50">
+                        <span id="containerWidthOutput" class="form__range-output"></span>
                     </div>
                 </fieldset>
                 <fieldset class="form__control--submit">
-                    <input type="submit" value="Generate">
+                    <input class="form__submit" type="submit" value="Generate">
                 </fieldset>
             </form>
-            </div><div id="console" class="console">
+        </div><div id="console" class="console">
             <p id="time" class="console__output">Generate a table to measure performance...</p>
-        </div><div id="generatedContainer">
+        </div>
+        <button id="responsibleToggle" class="button button--toggle">Toggle Responsible Table</button>
+        <div id="generatedContainer">
             <!-- generated table goes here -->
         </div>
     </main>

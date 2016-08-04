@@ -16,11 +16,13 @@ export default class TableGenerator {
         this.registerEvents();
     }
 
-     buildTable (mode) {
+     buildTable (options) {
         if (document.getElementById(this.tableId)) {
             document.getElementById(this.tableId).remove();
             document.getElementById('container').remove();
         }
+
+         console.log(options.mode);
 
         const generatedContainer = document.createElement('div');
         const generatedTable = document.createElement('table');
@@ -32,7 +34,7 @@ export default class TableGenerator {
         generatedContainer.className = 'container';
         generatedContainer.style.width = `${this.containerWidth}%`;
 
-        switch (mode) {
+        switch (options.mode) {
             case 'auto':
                 for (let i = this.rows; i--;) {
                     let row = document.createElement('tr');
@@ -48,6 +50,8 @@ export default class TableGenerator {
                 }
                 break;
             case 'html':
+                console.log('html');
+                console.log(generatedTable);
                 generatedTable.innerHTML = document.getElementById('htmlEntry').value;
                 break;
         }
@@ -62,24 +66,62 @@ export default class TableGenerator {
         this.form.addEventListener('submit', function (submit) {
             submit.preventDefault();
 
-            // true = html // false = auto
-            const formMode = document.getElementById('htmlRadio').checked;
+            const formMode = submit.target['formMode'].value;
+            let isValid = 0;
 
-            this.containerWidth = document.getElementById('containerWidth').value;
+            switch (formMode) {
+                case 'html':
+                    const htmlEntry = submit.target['htmlEntry'];
+                    if (htmlEntry.value !== "") {
+                        htmlEntry.classList.remove('error');
 
-            if (formMode) {
-                console.log('html form!');
-                document.getElementById(this.tableContainer).appendChild(this.buildTable('html'));
+                        // this.buildTable({mode: 'html'});
+                    }
+                    else {
+                        htmlEntry.classList.add('error');
+                        console.error('html entry was empty')
+                    }
+                    break;
+                case 'auto':
+                    const elements = [];
+
+                    function validateRowsColumns (inputArray) {
+                        inputArray.map(input => {
+                           if (input.value != 0) {
+                               input.classList.remove('error');
+                               isValid++;
+                           }
+                           else {
+                               input.classList.add('error');
+                           }
+                        });
+                    }
+
+                    [].slice.call(submit.target['tableCount']).map(count => {
+                        elements.push(count);
+                    });
+
+                    validateRowsColumns(elements);
+
+                    if (isValid === elements.length) {
+                        // this.buildTable({mode: 'auto'});
+                    }
+
+                    break;
+                case 'example':
+                    console.log('example!');
+                    break;
             }
-            else {
-                this.rows = document.getElementById('rowCount').value;
-                this.columns = document.getElementById('columnCount').value;
-                document.getElementById(this.tableContainer).appendChild(this.buildTable('auto'));
-            }
 
-            console.log(formMode);
-
-
+                // this.containerWidth = document.getElementById('containerWidth').value;
+                //
+            document.getElementById(this.tableContainer).appendChild(this.buildTable({mode: 'html'}));
+                // else {
+                //     this.rows = document.getElementById('rowCount').value;
+                //     this.columns = document.getElementById('columnCount').value;
+                //     document.getElementById(this.tableContainer).appendChild(this.buildTable('auto'));
+                // }
+                //
             const event = new Event('tableGenerator::complete');
             window.dispatchEvent(event);
         }.bind(this));

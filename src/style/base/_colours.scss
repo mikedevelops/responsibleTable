@@ -1,6 +1,12 @@
+/**
+* Colours
+**/
+
 $color-white: #fff;
 $color-black: #37343B;
 
 $color-grey-light: #f7f7f7;
+$color-grey-border: mix($color-black, $color-grey-light, 10%);
 
 $color-primary: #3498DB;
+

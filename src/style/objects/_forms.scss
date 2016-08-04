@@ -1,0 +1,119 @@
+.table-generator {
+    display: block;
+}
+
+.table-generator__form {
+    background-color: $color-grey-light;
+    border: 1px solid $color-grey-border;
+    border-radius: 3px;
+    padding: $space-and-third $space;
+    text-align: center;
+}
+
+.form__label {
+    display: block;
+    margin-bottom: $space-half;
+}
+
+.form__label--radio {
+    flex-basis: percentage(1 / 3);
+    margin-bottom: 0;
+    padding: 0 $space-third;
+    text-align: center;
+}
+
+.form__label--text {
+    display: block;
+    text-align: center;
+}
+
+.form__label--textarea {
+    display: block;
+}
+
+.form__radio-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form__heading {
+    margin-bottom: $space-half;
+    margin-top: 0;
+}
+
+.form__submit {
+    @extend .button;
+}
+
+.form__input-group {
+    display: inline-block;
+    padding: 0 $space;
+    width: 50%;
+
+    input {
+        width: 100%;
+    }
+}
+
+.form__input-group--radio {
+}
+
+.form__control {
+    padding: $space 0;
+    position: relative;
+
+    &::after {
+        background-color: $color-grey-border;
+        bottom: 0;
+        content: '';
+        display: block;
+        height: 1px;
+        left: 50%;
+        margin: 0 auto;
+        position: absolute;
+        transform: translateX(-50%);
+        width: 3rem;
+    }
+}
+
+.form__control--radio {
+    display: flex;
+}
+
+.form__range {
+    width: 70%;
+}
+
+.form__textarea {
+    -webkit-appearance: none;
+    border: 1px solid $color-grey-border;
+    height: 7rem;
+    resize: none;
+    width: 70%;
+}
+
+.form__range-output {
+    display: block;
+    margin-top: $space-half;
+}
+
+/**
+* Form Toggle
+**/
+
+.form-mode {
+    display: none;
+}
+
+.form-mode--active {
+    display: block;
+}
+
+/**
+* Errors
+**/
+
+.error {
+    color: #f00;
+}
+

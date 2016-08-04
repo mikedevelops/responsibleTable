@@ -39,7 +39,7 @@ function bundle (watch) {
 // compile scss
 gulp.task('scss', function () {
     return gulp
-        .src('./public/style/main.scss')
+        .src('./src/style/main.scss')
         .pipe(sourcemaps.init())
         .pipe(scss({ outputStyle: 'compressed' }))
         .pipe(autoprefixer({ annotation: false, browsers: ['> 1%', 'last 5 versions', 'Firefox ESR', 'Opera 12.1'] }))
@@ -49,16 +49,6 @@ gulp.task('scss', function () {
         .pipe(gulp.dest('./public/dist'))
         .pipe(browserSync.stream());
 });
-
-// watch
-// function watch () {
-//     return bundle(true);
-// }
-
-// dev server
-// function serve () {
-//
-// }
 
 gulp.task('javascript', function () {
     return bundle();
@@ -75,7 +65,7 @@ gulp.task('serve', function () {
 
     gulp.watch('./src/*.js', ['javascript'], browserSync.reload);
     // watch SCSS
-    gulp.watch('./public/style/**/*.scss', ['scss'], browserSync.reload);
+    gulp.watch('./src/style/**/*.scss', ['scss'], browserSync.reload);
     // watch HTML
     gulp.watch('./public/**/*.html', browserSync.reload);
 });

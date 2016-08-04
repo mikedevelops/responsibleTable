@@ -1,0 +1,25 @@
+/**
+* Console
+**/
+
+$console-bg: #333333;
+$console-text: #93F182;
+
+.console {
+    background-color: $console-bg;
+    border: 1px solid #e2e2e2;
+    border-radius: 7px;
+    box-shadow: inset 0 0 2px mix($color-black, $console-bg, 50%);
+    color: $console-text;
+    margin-top: $space;
+    padding: 1rem;
+    vertical-align: top;
+}
+
+.console__output {
+    font-family: monospace;
+}
+
+.console__output:not(:last-of-type) {
+    margin-bottom: .75rem;
+}

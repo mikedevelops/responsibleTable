@@ -1,0 +1,16 @@
+.button {
+    background-color: $color-primary;
+    border: 1px solid mix($color-black, $color-primary, 10%);
+    border-radius: 4px;
+    color: $color-white;
+    font-weight: $font-weight-bold;
+    padding: $space-half;
+    width: auto;
+}
+
+.button--toggle {
+    left: 50%;
+    margin-top: $space;
+    position: relative;
+    transform: translateX(-50%);
+}

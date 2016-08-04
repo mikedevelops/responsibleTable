@@ -300,9 +300,6 @@ var _tableGenerator2 = _interopRequireDefault(_tableGenerator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// const t0 = performance.now()initiatet responsibleTable = new ResponsibleTable();
-// const t1 = performance.now();
-
 var tableGenerator = new _tableGenerator2.default();
 var consoleElement = document.getElementById('console');
 var generatedContainer = document.getElementById('generatedContainer');
@@ -326,28 +323,25 @@ function consoleLog(log) {
 }
 
 window.addEventListener('tableGenerator::complete', function () {
-    var responsibleToggle = void 0;
+    var responsibleToggle = document.getElementById('responsibleToggle');
     var thisTableLabel = 'Responsible table [' + tableGenerator.columns + ' x ' + tableGenerator.rows + ', ' + tableGenerator.rows * tableGenerator.columns + ' cells]';
 
-    if (!document.getElementById('responsibleToggle')) {
-        responsibleToggle = document.createElement('button');
-        responsibleToggle.id = 'responsibleToggle';
-        responsibleToggle.innerHTML = 'Toggle Responsible Table';
-        mainContent.insertBefore(responsibleToggle, generatedContainer);
-        responsibleToggle.addEventListener('click', function () {
-            thisTableLabel = 'Responsible table [' + tableGenerator.columns + ' x ' + tableGenerator.rows + ', ' + tableGenerator.rows * tableGenerator.columns + ' cells]';
+    responsibleToggle.classList.remove('hidden');
 
-            if (!currentTable.tableData[0].isResponsible) {
-                currentTable.build(currentTable.originalTables[0], 0);
-                consoleLog(thisTableLabel + ' took <strong>' + currentTable.testData.result() + ' ms</strong> to build');
-            } else {
-                currentTable.restoreTable(0);
-                consoleLog(thisTableLabel + ' took <strong>' + currentTable.testData.result() + ' ms</strong> to restore');
-            }
-        });
-    } else {
-        responsibleToggle = document.getElementById('responsibleToggle');
-    }
+    responsibleToggle.addEventListener('click', function () {
+        console.log('refresh!');
+
+        thisTableLabel = 'Responsible table [' + tableGenerator.columns + ' x ' + tableGenerator.rows + ', ' + tableGenerator.rows * tableGenerator.columns + ' cells]';
+
+        // if (!currentTable.tableData[0].isResponsible) {
+        //     currentTable.build(currentTable.originalTables[0], 0);
+        //     consoleLog(`${thisTableLabel} took <strong>${currentTable.testData.result()} ms</strong> to build`);
+        // }
+        // else {
+        currentTable.restoreTable(0);
+        consoleLog(thisTableLabel + ' took <strong>' + currentTable.testData.result() + ' ms</strong> to restore');
+        // }
+    });
 
     start = performance.now();
 
@@ -362,6 +356,15 @@ window.addEventListener('tableGenerator::complete', function () {
 
 window.addEventListener('tableGenerator::refresh', function () {
     currentTable.refresh();
+});
+
+var containerWidthControl = document.getElementById('containerWidth');
+var containerWidthOutput = document.getElementById('containerWidthOutput');
+
+containerWidthOutput.innerHTML = containerWidthControl.value + '%';
+
+containerWidthControl.addEventListener('input', function (event) {
+    containerWidthOutput.innerHTML = event.target.value + '%';
 });
 
 },{"./responsibleTable":4,"./tableGenerator":5}],4:[function(require,module,exports){
@@ -850,11 +853,13 @@ var TableGenerator = function () {
 
     _createClass(TableGenerator, [{
         key: 'buildTable',
-        value: function buildTable(mode) {
+        value: function buildTable(options) {
             if (document.getElementById(this.tableId)) {
                 document.getElementById(this.tableId).remove();
                 document.getElementById('container').remove();
             }
+
+            console.log(options.mode);
 
             var generatedContainer = document.createElement('div');
             var generatedTable = document.createElement('table');
@@ -866,7 +871,7 @@ var TableGenerator = function () {
             generatedContainer.className = 'container';
             generatedContainer.style.width = this.containerWidth + '%';
 
-            switch (mode) {
+            switch (options.mode) {
                 case 'auto':
                     for (var i = this.rows; i--;) {
                         var row = document.createElement('tr');
@@ -882,6 +887,8 @@ var TableGenerator = function () {
                     }
                     break;
                 case 'html':
+                    console.log('html');
+                    console.log(generatedTable);
                     generatedTable.innerHTML = document.getElementById('htmlEntry').value;
                     break;
             }
@@ -896,22 +903,60 @@ var TableGenerator = function () {
             this.form.addEventListener('submit', function (submit) {
                 submit.preventDefault();
 
-                // true = html // false = auto
-                var formMode = document.getElementById('htmlRadio').checked;
+                var formMode = submit.target['formMode'].value;
+                var isValid = 0;
 
-                this.containerWidth = document.getElementById('containerWidth').value;
+                switch (formMode) {
+                    case 'html':
+                        var htmlEntry = submit.target['htmlEntry'];
+                        if (htmlEntry.value !== "") {
+                            htmlEntry.classList.remove('error');
 
-                if (formMode) {
-                    console.log('html form!');
-                    document.getElementById(this.tableContainer).appendChild(this.buildTable('html'));
-                } else {
-                    this.rows = document.getElementById('rowCount').value;
-                    this.columns = document.getElementById('columnCount').value;
-                    document.getElementById(this.tableContainer).appendChild(this.buildTable('auto'));
+                            // this.buildTable({mode: 'html'});
+                        } else {
+                                htmlEntry.classList.add('error');
+                                console.error('html entry was empty');
+                            }
+                        break;
+                    case 'auto':
+                        var elements = [];
+
+                        var validateRowsColumns = function validateRowsColumns(inputArray) {
+                            inputArray.map(function (input) {
+                                if (input.value != 0) {
+                                    input.classList.remove('error');
+                                    isValid++;
+                                } else {
+                                    input.classList.add('error');
+                                }
+                            });
+                        };
+
+                        [].slice.call(submit.target['tableCount']).map(function (count) {
+                            elements.push(count);
+                        });
+
+                        validateRowsColumns(elements);
+
+                        if (isValid === elements.length) {
+                            // this.buildTable({mode: 'auto'});
+                        }
+
+                        break;
+                    case 'example':
+                        console.log('example!');
+                        break;
                 }
 
-                console.log(formMode);
-
+                // this.containerWidth = document.getElementById('containerWidth').value;
+                //
+                document.getElementById(this.tableContainer).appendChild(this.buildTable({ mode: 'html' }));
+                // else {
+                //     this.rows = document.getElementById('rowCount').value;
+                //     this.columns = document.getElementById('columnCount').value;
+                //     document.getElementById(this.tableContainer).appendChild(this.buildTable('auto'));
+                // }
+                //
                 var event = new Event('tableGenerator::complete');
                 window.dispatchEvent(event);
             }.bind(this));

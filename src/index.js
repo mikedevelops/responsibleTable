@@ -1,9 +1,6 @@
 import ResponsibleTable from './responsibleTable';
 import TableGenerator from './tableGenerator';
 
-// const t0 = performance.now()initiatet responsibleTable = new ResponsibleTable();
-// const t1 = performance.now();
-
 const tableGenerator = new TableGenerator();
 const consoleElement = document.getElementById('console');
 const generatedContainer = document.getElementById('generatedContainer');
@@ -27,30 +24,25 @@ function consoleLog (log) {
 }
 
 window.addEventListener('tableGenerator::complete', () => {
-    let responsibleToggle;
+    let responsibleToggle = document.getElementById('responsibleToggle');
     let thisTableLabel = `Responsible table [${tableGenerator.columns} x ${tableGenerator.rows}, ${tableGenerator.rows * tableGenerator.columns} cells]`;
 
-    if (!document.getElementById('responsibleToggle')) {
-        responsibleToggle = document.createElement('button');
-        responsibleToggle.id = 'responsibleToggle';
-        responsibleToggle.innerHTML = 'Toggle Responsible Table';
-        mainContent.insertBefore(responsibleToggle, generatedContainer);
-        responsibleToggle.addEventListener('click', function () {
-            thisTableLabel = `Responsible table [${tableGenerator.columns} x ${tableGenerator.rows}, ${tableGenerator.rows * tableGenerator.columns} cells]`;
+    responsibleToggle.classList.remove('hidden');
 
-            if (!currentTable.tableData[0].isResponsible) {
-                currentTable.build(currentTable.originalTables[0], 0);
-                consoleLog(`${thisTableLabel} took <strong>${currentTable.testData.result()} ms</strong> to build`);
-            }
-            else {
-                currentTable.restoreTable(0);
-                consoleLog(`${thisTableLabel} took <strong>${currentTable.testData.result()} ms</strong> to restore`);
-            }
-        });
-    }
-    else {
-        responsibleToggle = document.getElementById('responsibleToggle');
-    }
+    responsibleToggle.addEventListener('click', function () {
+        console.log('refresh!');
+
+        thisTableLabel = `Responsible table [${tableGenerator.columns} x ${tableGenerator.rows}, ${tableGenerator.rows * tableGenerator.columns} cells]`;
+
+        // if (!currentTable.tableData[0].isResponsible) {
+        //     currentTable.build(currentTable.originalTables[0], 0);
+        //     consoleLog(`${thisTableLabel} took <strong>${currentTable.testData.result()} ms</strong> to build`);
+        // }
+        // else {
+            currentTable.restoreTable(0);
+            consoleLog(`${thisTableLabel} took <strong>${currentTable.testData.result()} ms</strong> to restore`);
+        // }
+    });
 
     start = performance.now();
 
@@ -67,3 +59,13 @@ window.addEventListener('tableGenerator::refresh', () => {
     currentTable.refresh();
 });
 
+
+
+const containerWidthControl = document.getElementById('containerWidth');
+const containerWidthOutput = document.getElementById('containerWidthOutput');
+
+containerWidthOutput.innerHTML = `${containerWidthControl.value}%`;
+
+containerWidthControl.addEventListener('input', (event) => {
+    containerWidthOutput.innerHTML = `${event.target.value}%`;
+});

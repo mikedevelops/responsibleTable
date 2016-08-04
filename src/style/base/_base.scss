@@ -17,6 +17,16 @@ html {
     }
 }
 
-body {
-    //background-color: $color-primary;
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+div {
+    margin: 0;
+}
+
+.hidden {
+    display: none;
 }

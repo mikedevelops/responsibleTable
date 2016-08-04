@@ -27,39 +27,6 @@ th {
   background-color: #e6e6e6;
 }
 
-.container {
-  border: 1px solid #f00;
-  margin-bottom: 1rem;
-}
-
-.responsibleTable {
-  text-align: center;
-  width: 100%;
-}
-.responsibleTable__sub-heading {
-  background-color: #f9f9f9;
-  font-weight: bold;
-}
-.responsibleTable__column-heading {
-  font-weight: bold;
-  text-align: right;
-}
-.responsibleTable__table-data {
-  text-align: left;
-}
-
-.responsibleTable--active td {
-  width: 50%;
-}
-
-.responsibleTable--active tr {
-  width: 100%;
-}
-
-.responsibleTable__single-cell {
-  width: 100%;
-}
-
 /**
 * console
 **/

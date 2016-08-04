@@ -1,5 +1,5 @@
 {
-  "name": "responsibleTable",
+  "name": "responsibleTables",
   "version": "1.0.0",
   "description": "A responsive solution for HTML tables",
   "main": "responsibleTables.js",

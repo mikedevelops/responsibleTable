@@ -3,8 +3,10 @@
 // TODO: handle tables with no th's
 // TODO: handle duplicate ID's
 
-export default class ResponsibleTable {
+class ResponsibleTables {
     constructor (options) {
+
+
         // defaults
         this.defaults = {
             activeClass: 'responsibleTable--active',
@@ -40,8 +42,6 @@ export default class ResponsibleTable {
         this.originalTables.forEach((table, index) => {
             // create tableData object per instance
             this.initiateTableData(table, index);
-
-            console.log(this.tableData);
             // cache original state
             if (!this.tableData[index].cache.original) {
                 this.cacheTable(table, index);
@@ -144,8 +144,6 @@ export default class ResponsibleTable {
      * @returns {boolean}
      */
     build (table, tableIndex) {
-        console.log('building...');
-
         this.testData.start = performance.now();
 
         if (!this.tableData[tableIndex].hasChanged) {
@@ -288,8 +286,6 @@ export default class ResponsibleTable {
      */
     restoreTable (index = null) {
         this.testData.start = performance.now();
-
-        console.log('restoring...');
         // if no index provided restore all tables
         if (index === null) {
             this.originalTables.forEach((table, index) => {
@@ -370,3 +366,5 @@ export default class ResponsibleTable {
         };
     }
 }
+
+module.exports = ResponsibleTables;

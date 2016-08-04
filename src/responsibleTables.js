@@ -5,7 +5,7 @@
 
 class ResponsibleTables {
     constructor (options) {
-        ResponsibleTables.VERSION = '1.0.0';
+        ResponsibleTables.VERSION = '1.0.1';
 
         // defaults
         this.defaults = {

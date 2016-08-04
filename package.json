@@ -1,8 +1,8 @@
 {
   "name": "responsibleTables",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A responsive solution for HTML tables",
-  "main": "src/responsibleTables.js",
+  "main": "dist/responsibleTables.bundle.js",
   "scripts": {
     "test": "browser-sync start --server ./ --files ./ --index tests/index.html"
   },

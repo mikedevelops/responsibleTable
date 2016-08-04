@@ -30,16 +30,10 @@ gulp.task('scss', function () {
         .pipe(browserSync.stream());
 });
 
-gulp.task('uglify', function () {
-    return gulp.src('./dist/responsibleTables.bundle.js')
-        .pipe(uglify())
-        .pipe(rename('responsibleTables.min.js'))
-        .pipe(gulp.dest('dist'));
-})
 
 gulp.task('javascript', function () {
     // wrap in watchify for liveupdate
-   var bundler = browserify('./src/responsibleTables.js', { debug: isDev }).transform(babel.configure({
+   var bundler = browserify('./src/responsibleTables.js', { debug: true }).transform(babel.configure({
         presets: ["es2015"]
     }));
 
@@ -47,9 +41,21 @@ gulp.task('javascript', function () {
         .on('error', function(err) { console.error(err); this.emit('end'); })
         .pipe(source('responsibleTables.bundle.js'))
         .pipe(buffer())
-        .pipe(ifElse(!isDev, uglify))
         .pipe(sourcemaps.init({ loadMaps: true }))
         .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('javascript:prod', function () {
+    // wrap in watchify for liveupdate
+   var bundler = browserify('./src/responsibleTables.js', { debug: false }).transform(babel.configure({
+        presets: ["es2015"]
+    }));
+
+    return bundler.bundle()
+        .on('error', function(err) { console.error(err); this.emit('end'); })
+        .pipe(source('responsibleTables.min.js'))
+        .pipe(buffer())
         .pipe(gulp.dest('./dist'));
 });
 
@@ -72,3 +78,4 @@ gulp.task('serve', function () {
 });
 
 gulp.task('default', ['javascript', 'scss', 'serve']);
+gulp.task('prod', ['javascript', 'javascript:prod', 'scss']);

@@ -1,6 +1,6 @@
 {
   "name": "responsibleTables",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A responsive solution for HTML tables",
   "main": "src/responsibleTables.js",
   "scripts": {
@@ -17,7 +17,9 @@
     "url": "https://github.com/mikedevelops/responsibleTables/issues"
   },
   "browserify": {
-    "transform": [ "babelify" ]
+    "transform": [
+      "babelify"
+    ]
   },
   "homepage": "https://github.com/mikedevelops/responsibleTable#readme",
   "devDependencies": {
@@ -37,5 +39,9 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0",
     "yargs": "^4.8.1"
+  },
+  "dependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babelify": "^7.3.0"
   }
 }

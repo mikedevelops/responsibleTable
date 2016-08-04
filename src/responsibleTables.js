@@ -5,7 +5,7 @@
 
 class ResponsibleTables {
     constructor (options) {
-        ResponsibleTables.VERSION = '0.1.3';
+        ResponsibleTables.VERSION = '1.0.0';
 
         // defaults
         this.defaults = {
@@ -30,6 +30,7 @@ class ResponsibleTables {
                 return Math.round(this.finish - this.start) ? `${Math.round(this.finish - this.start)}` : '< 1';
             }
         };
+
         this.registerEvents();
         this.init();
     }
@@ -47,7 +48,13 @@ class ResponsibleTables {
                 this.cacheTable(table, index);
             }
             // to build or not to build...
-            this.build(table, index, force);
+            if (this.tableData[index].currentWidth > this.tableData[index].container.width) {
+                this.tableData[index].minWidth = this.tableData[index].currentWidth;
+            }
+
+            if (this.tableData[index].minWidth > this.tableData[index].container.width) {
+                this.build(table, index);
+            }
         });
     }
 
@@ -63,7 +70,16 @@ class ResponsibleTables {
             }
 
             // to build or not to build...
-            this.build(table, index);
+            if (this.tableData[index].currentWidth > this.tableData[index].container.width) {
+                this.tableData[index].minWidth = this.tableData[index].currentWidth;
+            }
+
+            if (this.tableData[index].minWidth > this.tableData[index].container.width) {
+                this.build(table, index);
+            }
+            else if (this.tableData[index].minWidth !== 0 && this.tableData[index].minWidth < this.tableData[index].container.width && this.tableData[index].isResponsible) {
+                this.restoreTable(index);
+            }
         });
     }
 
@@ -147,34 +163,33 @@ class ResponsibleTables {
         this.testData.start = performance.now();
 
         if (!this.tableData[tableIndex].hasChanged) {
-            this.tableData[tableIndex].minWidth = this.tableData[tableIndex].currentWidth;
-            // create table fragment
-            this.tableData[tableIndex].fragment = document.createDocumentFragment();
-            // append first row to fragment
-            this.tableData[tableIndex].fragment.appendChild(this.buildFirstRow(table, tableIndex));
-            // loop through rows excluding the first and build out the data
-            this.tableData[tableIndex].rows.nodes.forEach((row, index) => {
-                if (index) {
-                    this.tableData[tableIndex].fragment.appendChild(this.buildTableData(table, tableIndex, index));
-                }
-            });
-            // clone original table node, excluding children
-            const newTable = table.cloneNode(false);
-            // append fragment to cloned node
-            newTable.appendChild(this.tableData[tableIndex].fragment);
-            // switch out innerHTML of old table for new
-            table.innerHTML = newTable.innerHTML;
-            // TODO: classList fallback
-            table.classList.add(this.defaults.activeClass);
-            // update config with new node
-            this.tableData[tableIndex].node = table;
-            // record state change
-            this.tableData[tableIndex].hasChanged = true;
-            this.tableData[tableIndex].isResponsible = true;
+                // create table fragment
+                this.tableData[tableIndex].fragment = document.createDocumentFragment();
+                // append first row to fragment
+                this.tableData[tableIndex].fragment.appendChild(this.buildFirstRow(table, tableIndex));
+                // loop through rows excluding the first and build out the data
+                this.tableData[tableIndex].rows.nodes.forEach((row, index) => {
+                    if (index) {
+                        this.tableData[tableIndex].fragment.appendChild(this.buildTableData(table, tableIndex, index));
+                    }
+                });
+                // clone original table node, excluding children
+                const newTable = table.cloneNode(false);
+                // append fragment to cloned node
+                newTable.appendChild(this.tableData[tableIndex].fragment);
+                // switch out innerHTML of old table for new
+                table.innerHTML = newTable.innerHTML;
+                // TODO: classList fallback
+                table.classList.add(this.defaults.activeClass);
+                // update config with new node
+                this.tableData[tableIndex].node = table;
+                // record state change
+                this.tableData[tableIndex].hasChanged = true;
+                this.tableData[tableIndex].isResponsible = true;
 
-            if (!this.tableData[tableIndex].cache.responsible) {
-                this.cacheTable(table, tableIndex);
-            }
+                if (!this.tableData[tableIndex].cache.responsible) {
+                    this.cacheTable(table, tableIndex);
+                }
         }
         // restore responsible table from cache if we have cached it
         else {

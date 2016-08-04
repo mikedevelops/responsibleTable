@@ -1,6 +1,6 @@
 {
   "name": "responsibleTables",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A responsive solution for HTML tables",
   "main": "dist/responsibleTables.bundle.js",
   "scripts": {
@@ -15,6 +15,9 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/mikedevelops/responsibleTables/issues"
+  },
+  "browserify": {
+    "transform": [ "babelify" ]
   },
   "homepage": "https://github.com/mikedevelops/responsibleTable#readme",
   "devDependencies": {

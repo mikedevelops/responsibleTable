@@ -1,6 +1,6 @@
 {
   "name": "responsibleTables",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A responsive solution for HTML tables",
   "main": "src/responsibleTables.js",
   "scripts": {

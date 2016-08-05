@@ -9,7 +9,7 @@ var _defaultsDeep = require('lodash.defaultsDeep');
 
 class ResponsibleTables {
     constructor (options) {
-        ResponsibleTables.VERSION = '1.0.4';
+        ResponsibleTables.VERSION = '1.0.5';
 
         // defaults
         this.defaults = {
@@ -24,7 +24,7 @@ class ResponsibleTables {
         };
         this.options = {};
         this.options = _defaultsDeep(this.options, options, this.defaults);
-        
+
         // vars
         this.originalTables = [].slice.call(document.querySelectorAll(this.options.tableSelector));
         this.tableData = [];

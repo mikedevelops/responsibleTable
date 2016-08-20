@@ -1,6 +1,5 @@
 .container {
-  border: 1px solid #f00;
-  margin: $space 0 0;
+  margin: 0;
 }
 
 td,
@@ -11,6 +10,15 @@ th {
 
 th {
   background-color: #e6e6e6;
+}
+
+.h3 {
+  background-color: #f9f9f9;
+  border: 1px solid #cccccc;
+  font-weight: bold;
+  margin: 0 0 .5rem;
+  padding: 1rem;
+  text-align: center;
 }
 
 .responsibleTable {

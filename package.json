@@ -44,6 +44,7 @@
     "babel-preset-es2015": "^6.9.0",
     "babelify": "^7.3.0",
     "classlist-polyfill": "^1.0.3",
+    "lodash.debounce": "^4.0.8",
     "lodash.defaultsdeep": "^4.5.1"
   }
 }

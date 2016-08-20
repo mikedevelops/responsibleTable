@@ -5,35 +5,33 @@
 
 require('classlist-polyfill');
 
-var _defaultsDeep = require('lodash.defaultsDeep');
+const _defaultsDeep = require('lodash.defaultsDeep');
+const _debounce = require('lodash.debounce');
+
+const defaults = {
+    activeClass: 'responsibleTable--active',
+    columnHeadingClass: 'responsibleTable__column-heading',
+    containerSelector: '.container',
+    debounceRate: 200,
+    subHeadingClass: 'responsibleTable__sub-heading',
+    tableDataClass: 'responsibleTable__table-data',
+    tableSelector: '.responsibleTable',
+    debug: false
+};
+
 
 class ResponsibleTables {
     constructor (options) {
         ResponsibleTables.VERSION = '1.0.5';
 
-        // defaults
-        this.defaults = {
-            activeClass: 'responsibleTable--active',
-            columnHeadingClass: 'responsibleTable__column-heading',
-            containerSelector: '.container',
-            debounceRate: 200,
-            subHeadingClass: 'responsibleTable__sub-heading',
-            tableDataClass: 'responsibleTable__table-data',
-            tableSelector: '.responsibleTable',
-            debug: false
-        };
-        this.options = {};
-        this.options = _defaultsDeep(this.options, options, this.defaults);
-
-        // vars
+        this.options = _defaultsDeep(options, defaults);
         this.originalTables = [].slice.call(document.querySelectorAll(this.options.tableSelector));
         this.tableData = [];
-        this.testData = {
-            start: 0,
-            finish: 0,
-            result () {
-                return Math.round(this.finish - this.start) ? `${Math.round(this.finish - this.start)}` : '< 1';
-            }
+        this.regex = {
+            tableCell: /(<t(?:d|h))(.*?)(>)/g,
+            collspan: /colspan="([0-9]*)"/g,
+            className: /class="(.*?)"/g,
+            tableElement: /(<table)(.*?)(>)/g
         };
 
         this.registerEvents();
@@ -42,22 +40,27 @@ class ResponsibleTables {
 
     /**
      * initiate data, cache table, build / not build
-     * @param force {boolean}
      */
-    init (force = false) {
-        this.originalTables.forEach((table, index) => {
+    init () {
+        this.originalTables.map((table, index) => {
             // create tableData object per instance
             this.initiateTableData(table, index);
             // cache original state
             if (!this.tableData[index].cache.original) {
                 this.cacheTable(table, index);
             }
-            // to build or not to build...
-            if (this.tableData[index].currentWidth > this.tableData[index].container.width) {
-                this.tableData[index].minWidth = this.tableData[index].currentWidth;
+
+            const { currentWidth, container } = this.tableData[index];
+
+            // set table min width if we can
+            if (currentWidth > container.width) {
+                this.tableData[index].minWidth = currentWidth;
             }
 
-            if (this.tableData[index].minWidth > this.tableData[index].container.width) {
+            const { minWidth } = this.tableData[index];
+
+            // to build or not to build...
+            if (minWidth > container.width) {
                 this.build(table, index);
             }
         });
@@ -67,22 +70,29 @@ class ResponsibleTables {
      * refresh table state, update table & container width, build / not build
      */
     refresh () {
-        this.originalTables.forEach((table, index) => {
-            this.tableData[index].currentWidth = this.tableData[index].node.getBoundingClientRect().width;
+        this.originalTables.map((table, index) => {
+            const { node } = this.tableData[index];
 
+            // get current width of table
+            this.tableData[index].currentWidth = node.getBoundingClientRect().width;
+
+            // get current width of container
             if (this.tableData[index].container.node) {
                 this.tableData[index].container.width = this.tableData[index].container.node.getBoundingClientRect().width;
             }
 
-            // to build or not to build...
-            if (this.tableData[index].currentWidth > this.tableData[index].container.width) {
-                this.tableData[index].minWidth = this.tableData[index].currentWidth;
+            const { currentWidth, minWidth, isResponsible } = this.tableData[index];
+
+            // update min width
+            if (currentWidth > this.tableData[index].container.width) {
+                this.tableData[index].minWidth = currentWidth;
             }
 
-            if (this.tableData[index].minWidth > this.tableData[index].container.width) {
+            // to build or not to build...
+            if (minWidth > this.tableData[index].container.width) {
                 this.build(table, index);
             }
-            else if (this.tableData[index].minWidth !== 0 && this.tableData[index].minWidth < this.tableData[index].container.width && this.tableData[index].isResponsible) {
+            else if (minWidth !== 0 && minWidth < this.tableData[index].container.width && isResponsible) {
                 this.restoreTable(index);
             }
         });
@@ -154,8 +164,6 @@ class ResponsibleTables {
         if (this.tableData[index].container.node) {
             this.tableData[index].container.width = this.tableData[index].container.node.getBoundingClientRect().width;
         }
-        // fragment
-        this.tableData[index].fragment = document.createDocumentFragment();
     }
 
     /**
@@ -170,38 +178,35 @@ class ResponsibleTables {
         }
 
         if (!this.tableData[tableIndex].hasChanged) {
-                // create table fragment
-                this.tableData[tableIndex].fragment = document.createDocumentFragment();
-                // append first row to fragment
-                this.tableData[tableIndex].fragment.appendChild(this.buildFirstRow(table, tableIndex));
-                // loop through rows excluding the first and build out the data
-                this.tableData[tableIndex].rows.nodes.forEach((row, index) => {
-                    if (index) {
-                        this.tableData[tableIndex].fragment.appendChild(this.buildTableData(table, tableIndex, index));
-                    }
-                });
-                // clone original table node, excluding children
-                const newTable = table.cloneNode(false);
-                // append fragment to cloned node
-                newTable.appendChild(this.tableData[tableIndex].fragment);
-                // switch out innerHTML of old table for new
-                table.innerHTML = newTable.innerHTML;
-                // TODO: classList fallback
-                table.classList.add(this.options.activeClass);
-                // update config with new node
-                this.tableData[tableIndex].node = table;
-                // record state change
-                this.tableData[tableIndex].hasChanged = true;
-                this.tableData[tableIndex].isResponsible = true;
+            const { rows } = this.tableData[tableIndex];
 
-                if (!this.tableData[tableIndex].cache.responsible) {
-                    this.cacheTable(table, tableIndex);
-                }
+            let innerTableHTML = this.buildFirstRow(table);
+            let tableHTML = this.regex.tableElement.exec(table.outerHTML)[0];
+
+            // remove first row as we've already dealt with that
+            rows.nodes.shift();
+
+            // loop through rows excluding the first and build out the data
+            rows.nodes.map((row, index) => {
+                innerTableHTML += this.buildTableData(table, tableIndex, index);
+            });
+
+            tableHTML = this.addCellClass(tableHTML, this.options.activeClass);
+            tableHTML += `${tableHTML}${innerTableHTML}</table>`;
+
+            table.innerHTML = tableHTML;
+
+            this.tableData[tableIndex].node = table;
+            this.tableData[tableIndex].hasChanged = true;
+            this.tableData[tableIndex].isResponsible = true;
+
+            if (!this.tableData[tableIndex].cache.responsible) {
+                this.cacheTable(table, tableIndex);
+            }
         }
         // restore responsible table from cache if we have cached it
         else {
             this.tableData[tableIndex].node.outerHTML = this.tableData[tableIndex].cache.responsible;
-            // TODO Do we need this node reference
             this.tableData[tableIndex].node = document.querySelector(this.options.tableSelector);
             this.tableData[tableIndex].isResponsible = true;
         }
@@ -217,7 +222,6 @@ class ResponsibleTables {
      * @returns {array}
      */
     getColumns (table) {
-        // potentially better way of getting this, maybe get largest row instead of assuming the first
         const firstRow = this.getRows(table)[0];
         return [].slice.call(firstRow.children);
     }
@@ -239,8 +243,8 @@ class ResponsibleTables {
     getTableHeadings (table, index) {
         let headings = [];
 
-        this.tableData[index].columns.nodes.forEach((column, index) => {
-            headings.push(table.getElementsByTagName('th')[index].innerHTML);
+        this.tableData[index].columns.nodes.map((column, columnIndex) => {
+            headings.push(table.getElementsByTagName('th')[columnIndex].innerHTML);
         });
 
         return headings;
@@ -252,17 +256,16 @@ class ResponsibleTables {
      * @param index {int}
      * @returns {Element}
      */
-    buildFirstRow (table, index) {
-        // this might not be a th, fix that
-        const firstCell = table.querySelector('th');
-        const firstRow = document.createElement('tr');
-        const thisCell = document.createElement('th');
+    buildFirstRow (table) {
+        let firstCellHTML = table.querySelector('tr').children[0].outerHTML;
 
-        thisCell.innerHTML = firstCell.innerHTML;
-        thisCell.setAttribute('colspan', 2);
-        firstRow.appendChild(thisCell);
+        firstCellHTML = this.replaceColspan(firstCellHTML, 2);
 
-        return firstRow;
+        // split element on opening tag
+        const cellDataList = firstCellHTML.split(this.regex.tableCell);
+
+        // return table row string
+        return `<tr>${cellDataList.join('')}</tr>`;
     }
 
     /**
@@ -270,38 +273,32 @@ class ResponsibleTables {
      * @param table {Element}
      * @param tableIndex {int}
      * @param rowIndex {int}
-     * @returns {DocumentFragment}
      */
     buildTableData (table, tableIndex, rowIndex) {
-        const fragment = document.createDocumentFragment();
-        const firstRow = document.createElement('tr');
-        const cells = this.tableData[tableIndex].rows.nodes[rowIndex].querySelectorAll('td');
-        const firstCell = cells[0];
-        // append first cell as data heading
-        firstCell.setAttribute('colspan', 2);
-        // TODO: fallback for ie9
-        firstCell.classList.add(this.options.subHeadingClass);
-        firstRow.appendChild(firstCell);
-        fragment.appendChild(firstRow);
-        // loop through each column exluding first and populate data
-        this.tableData[tableIndex].columns.nodes.forEach((column, index) => {
-            if (index) {
-                const row = document.createElement('tr');
-                const heading = document.createElement('td');
+        const { columns, headings } = this.tableData[tableIndex];
+        const cells = [].slice.call(this.tableData[tableIndex].rows.nodes[rowIndex].children);
+        let firstCellHTML = cells[0].outerHTML;
+        let tableDataHTML = '';
 
-                heading.innerHTML = this.tableData[tableIndex].headings.titles[index];
-                // TODO: this might not be a 'th', fix that
-                // TODO: classlist fallback
-                heading.classList.add(this.options.columnHeadingClass);
-                row.appendChild(heading);
-                // TODO: classlist fallback
-                cells[index].classList.add(this.options.tableDataClass);
-                row.appendChild(cells[index]);
-                fragment.appendChild(row);
+        firstCellHTML = this.replaceColspan(firstCellHTML, 2);
+        firstCellHTML = this.addCellClass(firstCellHTML, this.options.subHeadingClass);
+        firstCellHTML = `<tr>${firstCellHTML}</tr>`;
+        tableDataHTML += firstCellHTML;
+
+        // loop through each columns and build data, exclude first column as we've dealt with it above
+        columns.nodes.map((column, index) => {
+            if (index) {
+                let row = `<tr><td>${headings.titles[index]}</td>`;
+                let cell = cells[index].outerHTML;
+
+                row = this.addCellClass(row, this.options.columnHeadingClass);
+                cell = this.addCellClass(cell, this.options.tableDataClass);
+                row += `${cell}</tr>`;
+                tableDataHTML += row;
             }
         });
 
-        return fragment;
+        return tableDataHTML;
     }
 
     /**
@@ -315,7 +312,7 @@ class ResponsibleTables {
 
         // if no index provided restore all tables
         if (index === null) {
-            this.originalTables.forEach((table, index) => {
+            this.originalTables.map((table, index) => {
                 if (this.tableData[index].isResponsible) {
                     table.outerHTML = this.tableData[index].cache.original;
                     this.tableData[index].isResponsible = false;
@@ -354,6 +351,47 @@ class ResponsibleTables {
     }
 
     /**
+     * Replace colspan attr value in a string
+     * If collspan is not present, add it
+     * @param colspan
+     */
+    replaceColspan (string, colspan) {
+        if (this.regex.collspan.exec(string)) {
+            string = string.replace(this.regex.collspan, `colspan="${colspan}"`);
+        }
+        else {
+            let splitCell = string.split(this.regex.tableCell);
+
+            splitCell[1] = `<td colspan="${colspan}"`;
+            string = splitCell.join('');
+        }
+
+        return string;
+    }
+
+    /**
+     * Add Cell Class
+     * Add to current class or create class attr
+     */
+    addCellClass (string, className) {
+        const classList = this.regex.className.exec(string);
+
+        if (classList !== null) {
+            const initialClass = classList[1];
+
+            string = string.replace(this.regex.className, `class="${initialClass} ${className}"`);
+        }
+        else {
+            let splitCell = string.split(this.regex.tableCell);
+
+            splitCell[1] = `<td class="${className}"`;
+            string = splitCell.join('');
+        }
+
+        return string;
+    }
+
+    /**
     * merge options & default objects
     * @param    {object} options
     * @param    {object} defaults
@@ -372,27 +410,9 @@ class ResponsibleTables {
     * de-bounce and add window resize
     **/
     registerEvents () {
-        window.addEventListener('resize', this.debounce(() => {
+        window.addEventListener('resize', _debounce(() => {
             this.refresh();
         }, this.options.debounceRate));
-    }
-
-    /**
-    * event de-bounce taken from Underscore.js
-    **/
-    debounce (func, wait, immediate) {
-        let timeout;
-        return () => {
-            const context = this, args = arguments;
-            const later = function() {
-                timeout = null;
-                if (!immediate) func.apply(context, args);
-            };
-            const callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) func.apply(context, args);
-        };
     }
 }
 

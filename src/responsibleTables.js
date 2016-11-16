@@ -59,6 +59,9 @@ class ResponsibleTables {
 
             const { minWidth } = this.tableData[index];
 
+            console.log('min-width: ', minWidth);
+            console.log('container Width: ', container.width);
+
             // to build or not to build...
             if (minWidth > container.width) {
                 this.build(table, index);
@@ -75,6 +78,8 @@ class ResponsibleTables {
 
             // get current width of table
             this.tableData[index].currentWidth = node.getBoundingClientRect().width;
+
+            console.log('table current width: ', this.tableData[index].currentWidth);
 
             // get current width of container
             if (this.tableData[index].container.node) {
@@ -177,6 +182,8 @@ class ResponsibleTables {
             this.testData.start = performance.now();
         }
 
+        console.log('building...');
+
         if (!this.tableData[tableIndex].hasChanged) {
             const { rows } = this.tableData[tableIndex];
 
@@ -188,7 +195,7 @@ class ResponsibleTables {
 
             // loop through rows excluding the first and build out the data
             rows.nodes.map((row, index) => {
-                innerTableHTML += this.buildTableData(table, tableIndex, index);
+                innerTableHTML += this.buildTableData(tableIndex, index);
             });
 
             tableHTML = this.addCellClass(tableHTML, this.options.activeClass);
@@ -274,7 +281,7 @@ class ResponsibleTables {
      * @param tableIndex {int}
      * @param rowIndex {int}
      */
-    buildTableData (table, tableIndex, rowIndex) {
+    buildTableData (tableIndex, rowIndex) {
         const { columns, headings } = this.tableData[tableIndex];
         const cells = [].slice.call(this.tableData[tableIndex].rows.nodes[rowIndex].children);
         let firstCellHTML = cells[0].outerHTML;
@@ -353,6 +360,7 @@ class ResponsibleTables {
     /**
      * Replace colspan attr value in a string
      * If collspan is not present, add it
+     * @param string
      * @param colspan
      */
     replaceColspan (string, colspan) {
@@ -372,6 +380,8 @@ class ResponsibleTables {
     /**
      * Add Cell Class
      * Add to current class or create class attr
+     * @param string
+     * @param className
      */
     addCellClass (string, className) {
         const classList = this.regex.className.exec(string);
